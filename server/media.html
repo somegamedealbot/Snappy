@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPEG-DASH Media Player</title>
+  <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+</head>
+<body>
+  <h1>MPEG-DASH Media Player</h1>
+  <video id="videoPlayer" controls width="640" height="360"></video>
+  
+  <script>
+    // Initialize dash.js player
+    var url = 'http://your.server.com/media/4781506-uhd_4096_2160_25fps.mpd'; // Update with your actual server URL
+    var player = dashjs.MediaPlayer().create();
+    player.initialize(document.querySelector("#videoPlayer"), url, true);
+  </script>
+</body>
+</html>
