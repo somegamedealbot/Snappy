@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const next = require('next');
 const {sequelize, User} = require("./dbsetup");
 const {sendMail} = require("./sendmail");
+const path = require('path');
 
 const users = [
   { username: 'testuser', password: bcrypt.hashSync('password', 10), email: 'test@example.com' },
@@ -41,6 +42,7 @@ app.prepare().then(() => {
     next();
   })
 
+  
   // Custom route: serve a specific Next.js page
   server.get('/', (req, res) => {
     // You can pass query parameters here, which can be accessed by the Next.js page
@@ -54,11 +56,11 @@ app.prepare().then(() => {
       return app.render(req, res, '/signup');
     }
   });
-
+  
   server.post('/adduser', async (req, res) => {
     const {username, email, password} = req.body
     try {
-
+      
       const key = crypto.randomBytes(32).toString();
       const disabled_user = User.build({
         username,
@@ -66,9 +68,9 @@ app.prepare().then(() => {
         password,
         key
       });
-
+      
       await disabled_user.save();
-
+      
       // send email to target
       await sendMail(email, key);
       res.status(200).json({message: 'Successfully created account.'});
@@ -78,12 +80,12 @@ app.prepare().then(() => {
       console.log('Unable to create user', err)
       res.status(200).json({message: 'Could not create user because username or email is taken.'});
     }
-
+    
   });
-
+  
   server.get('/verify', async (req, res) => {
     const {email, key} = req.query;
-
+    
     try {
       const user = await User.findOne({
         where: {email}
@@ -102,6 +104,10 @@ app.prepare().then(() => {
       res.status(400).json({message: 'Unable to verify account', error});
     }
   })
+  
+  // server.get('/login', async(req, res) => {
+  //   return app.render(req, res, '/login');
+  // });
 
   server.post('/login', async (req, res) => {
     const {username, password} = req.body;
@@ -166,6 +172,27 @@ app.prepare().then(() => {
       return res.status(200).json({ error: true, message: 'Unauthorized access' });
     }
     res.sendFile(path.join(__dirname, 'media-player.html'));
+  });
+
+  // get manifest file
+  server.get('/media/output.mpd', (req, res) => {
+    if (req.session.loggedIn){
+      res.sendFile('media/4781506-uhd_4096_2160_25fps.mpd', {root: __dirname});
+    }
+    else {
+      res.status(401);
+    }
+  });
+
+  // get chunks
+  server.get(['/media/*', /(css|scripts)/], (req, res) => {
+
+    if (req.session.loggedIn) {
+      res.sendFile(req.path, {root: __dirname});
+    }
+    else {
+      res.status(401);
+    }
   });
 
   // Handle any other Next.js route

@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-    service: 'postfix',
+    // service: 'postfix',
     port: 25,
     secure: false, 
     tls: {
