@@ -38,6 +38,7 @@ app.prepare().then(() => {
   }));
 
   server.use((req, res, next) => {
+    console.log(req.url, req.body);
     res.setHeader('X-CSE356', '66d1284d7f77bf55c5003d5a');
     next();
   })
@@ -50,10 +51,17 @@ app.prepare().then(() => {
     
     // if user is logged in
     if (req.session?.loggedIn) {
-      res.sendFile('media.html', {root : __dirname});
+      res.status(200).sendFile('media.html', {root : __dirname});
     }
     else {
-      return app.render(req, res, '/signup');
+      // res.redirect('/login');
+      res.status(200);
+      res.json({
+        status: 'ERROR',
+        error: true,
+        message: 'Client not logged in'
+      });
+      // return app.render(req, res, '/signup');
     }
   });
   
@@ -61,7 +69,7 @@ app.prepare().then(() => {
     const {username, email, password} = req.body
     try {
       
-      const key = crypto.randomBytes(32).toString();
+      const key = crypto.randomBytes(32).toString('hex');
       const disabled_user = User.build({
         username,
         email, 
@@ -73,12 +81,19 @@ app.prepare().then(() => {
       
       // send email to target
       await sendMail(email, key);
-      res.status(200).json({message: 'Successfully created account.'});
+      res.status(200).json({
+        status: 'OK',
+        message: 'Successfully created account.'
+      });
     }
     
     catch(err) {
       console.log('Unable to create user', err)
-      res.status(200).json({message: 'Could not create user because username or email is taken.'});
+      res.status(200).json({
+        status: 'ERROR',
+        error: true,
+        message: 'Could not create user because username or email is taken, or internal error'
+      });
     }
     
   });
@@ -94,20 +109,31 @@ app.prepare().then(() => {
       if (user && user.key == key){
         user.key = null;
         await user.save();
-        res.status(200).json({message: 'Account successfully verified.'});
+        res.status(200).json({
+          status: 'OK',
+          message: 'Account successfully verified.'
+        });
       }
       else {
-        res.status(200).json({message: 'Account already verified.'});
+        res.status(200).json({
+          status: 'ERROR',
+          error: true,
+          message: 'Account already verified.'
+        });
       }
     }
     catch (error) {
-      res.status(400).json({message: 'Unable to verify account', error});
+      res.status(200).json({
+        status: 'ERROR',
+        error: true,
+        message: 'Unable to verify account',
+      });
     }
   })
   
-  // server.get('/login', async(req, res) => {
-  //   return app.render(req, res, '/login');
-  // });
+  server.get('/login', async(req, res) => {
+    return app.render(req, res, '/login');
+  });
 
   server.post('/login', async (req, res) => {
     const {username, password} = req.body;
@@ -123,20 +149,35 @@ app.prepare().then(() => {
         // Successful login
         if (isPasswordValid) {
           req.session.loggedIn = true;
-          res.status(200).json({message: 'Successfully logged in.'});
+          res.status(200).json({
+            status: 'OK', 
+            message: 'Successfully logged in.'
+          });
         }
         else {
-          res.status(400).json({message: 'Unable to login, username or password was incorrect.'});
+          res.status(200).json({
+            status: 'ERROR',
+            error: true,
+            message: 'Unable to login, username or password was incorrect.'
+          });
         }
       }
       else {
-        res.status(400).json({message: 'Unable to login, username or password was incorrect.'});
+        res.status(200).json({
+          status: 'ERROR',
+          error: true,
+          message: 'Unable to login, account is not activated.'
+        });
       }
 
     }
     catch (err) {
       console.error('Error when finding user', err);
-      res.status(500).json({message: 'Error accessing database.'});
+      res.status(500).json({
+        status: 'ERROR',
+        error: true,
+        message: 'Error accessing database.'
+      });
     }
 
   });
@@ -146,33 +187,44 @@ app.prepare().then(() => {
     if (req.session?.loggedIn) {
       req.session.destroy(err => {
         if (err) {
-          return res.status(200).json({ error: true, message: 'Logout failed' });
+          return res.status(200).json({
+            status: 'ERROR',
+            error: true, 
+            message: 'Logout failed' 
+          });
         } else {
           res.clearCookie('connect.sid');
-          return res.status(200).json({ message: 'Logout successful' });
+          return res.status(200).json({ 
+            status: 'OK',
+            message: 'Logout successful' 
+          });
         }
       });
     } 
     else {
-      return res.status(200).json({ error: true, message: 'No session found' });
+      return res.status(200).json({ 
+        status: 'ERROR',
+        error: true, 
+        message: 'No session found' 
+      });
     }
   });
 
   // Protected route example (only accessible when logged in)
-  server.get('/protected', (req, res) => {
-    if (!req.session.user) {
-      return res.status(200).json({ error: true, message: 'Unauthorized access' });
-    }
+  // server.get('/protected', (req, res) => {
+  //   if (!req.session.user) {
+  //     return res.status(200).json({ error: true, message: 'Unauthorized access' });
+  //   }
 
-    return res.status(200).json({ message: `Hello ${req.session.user.username}` });
-  });
+  //   return res.status(200).json({ message: `Hello ${req.session.user.username}` });
+  // });
 
-  server.get('/media-player', (req, res) => {
-    if (!req.session.user) {
-      return res.status(200).json({ error: true, message: 'Unauthorized access' });
-    }
-    res.sendFile(path.join(__dirname, 'media-player.html'));
-  });
+  // server.get('/media-player', (req, res) => {
+  //   if (!req.session.user) {
+  //     return res.status(200).json({ error: true, message: 'Unauthorized access' });
+  //   }
+  //   res.sendFile(path.join(__dirname, 'media-player.html'));
+  // });
 
   // get manifest file
   server.get('/media/output.mpd', (req, res) => {
@@ -180,7 +232,11 @@ app.prepare().then(() => {
       res.sendFile('media/4781506-uhd_4096_2160_25fps.mpd', {root: __dirname});
     }
     else {
-      res.status(401);
+      res.status(200).json({
+        status: 'ERROR',
+        error: true,
+        message: 'Unauthorized'
+      });
     }
   });
 
@@ -191,7 +247,11 @@ app.prepare().then(() => {
       res.sendFile(req.path, {root: __dirname});
     }
     else {
-      res.status(401);
+      res.status(200).json({
+        status: 'ERROR',
+        error: true,
+        message: 'Unauthorized'
+      });
     }
   });
 

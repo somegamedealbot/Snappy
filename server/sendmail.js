@@ -16,7 +16,7 @@ console.log('Transport Created');
 
 const sendMail = async (destEmail, key) =>{
 
-    const url = new URL(`http://localhost:${process.env.PORT}?`);
+    const url = new URL(`http://wbill.cse356.compas.cs.stonybrook.edu:${process.env.PORT}/verify?`);
     url.searchParams.append('email', destEmail);
     url.searchParams.append('key', key);
     // const url = new URL('http://wbill.cse356.compas.cs.stonybrook.edu:')
