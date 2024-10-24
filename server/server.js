@@ -3,6 +3,8 @@ const session = require('express-session');
 const SQLite = require('connect-sqlite3')(session);
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const apiRouter = require("./api");
+
 
 const next = require('next');
 const {sequelize, User} = require("./dbsetup");
@@ -36,6 +38,7 @@ app.prepare().then(() => {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   }));
+  
 
   server.use((req, res, next) => {
     console.log(req.url, req.body);
@@ -43,15 +46,16 @@ app.prepare().then(() => {
     next();
   })
 
+  // Use the router create for the api
+  server.use('/api', apiRouter);
   
-  // Custom route: serve a specific Next.js page
   server.get('/', (req, res) => {
     // You can pass query parameters here, which can be accessed by the Next.js page
     // return app.render(req, res, '/signUp', { title: 'Custom Page' });
     
     // if user is logged in
     if (req.session?.loggedIn) {
-      res.status(200).sendFile('media.html', {root : __dirname});
+      res.status(200).sendFile('/public/media.html', {root : __dirname});
     }
     else {
       // res.redirect('/login');
@@ -65,194 +69,45 @@ app.prepare().then(() => {
     }
   });
   
-  server.post('/adduser', async (req, res) => {
-    const {username, email, password} = req.body
-    try {
-      
-      const key = crypto.randomBytes(32).toString('hex');
-      const disabled_user = User.build({
-        username,
-        email, 
-        password,
-        key
-      });
-      
-      await disabled_user.save();
-      
-      // send email to target
-      await sendMail(email, key);
-      res.status(200).json({
-        status: 'OK',
-        message: 'Successfully created account.'
-      });
-    }
-    
-    catch(err) {
-      console.log('Unable to create user', err)
-      res.status(200).json({
-        status: 'ERROR',
-        error: true,
-        message: 'Could not create user because username or email is taken, or internal error'
-      });
-    }
-    
-  });
-  
-  server.get('/verify', async (req, res) => {
-    const {email, key} = req.query;
-    
-    try {
-      const user = await User.findOne({
-        where: {email}
-      });
-      // Successful login
-      if (user && user.key == key){
-        user.key = null;
-        await user.save();
-        res.status(200).json({
-          status: 'OK',
-          message: 'Account successfully verified.'
-        });
-      }
-      else {
-        res.status(200).json({
-          status: 'ERROR',
-          error: true,
-          message: 'Account already verified.'
-        });
-      }
-    }
-    catch (error) {
-      res.status(200).json({
-        status: 'ERROR',
-        error: true,
-        message: 'Unable to verify account',
-      });
-    }
-  })
-  
   server.get('/login', async(req, res) => {
     return app.render(req, res, '/login');
   });
 
-  server.post('/login', async (req, res) => {
-    const {username, password} = req.body;
-    
-    try {
-      const user = await User.findOne({
-        where: {username}
-      });
-      // User is already verified (key is null)
-      if (user && user.key == null){
-        const isPasswordValid = user.password == password
-        // const isPasswordValid = await bcrypt.compare(password, user.password);
-        // Successful login
-        if (isPasswordValid) {
-          req.session.loggedIn = true;
-          res.status(200).json({
-            status: 'OK', 
-            message: 'Successfully logged in.'
-          });
-        }
-        else {
-          res.status(200).json({
-            status: 'ERROR',
-            error: true,
-            message: 'Unable to login, username or password was incorrect.'
-          });
-        }
-      }
-      else {
-        res.status(200).json({
-          status: 'ERROR',
-          error: true,
-          message: 'Unable to login, account is not activated.'
-        });
-      }
-
-    }
-    catch (err) {
-      console.error('Error when finding user', err);
-      res.status(500).json({
-        status: 'ERROR',
-        error: true,
-        message: 'Error accessing database.'
-      });
-    }
-
+  server.get('/player', (req, res) => {
+    res.status(200).sendFile('/public/media.html', {root : __dirname});
   });
 
-  // Logout endpoint
-  server.post('/logout', (req, res) => {
-    if (req.session?.loggedIn) {
-      req.session.destroy(err => {
-        if (err) {
-          return res.status(200).json({
-            status: 'ERROR',
-            error: true, 
-            message: 'Logout failed' 
-          });
-        } else {
-          res.clearCookie('connect.sid');
-          return res.status(200).json({ 
-            status: 'OK',
-            message: 'Logout successful' 
-          });
-        }
-      });
-    } 
-    else {
-      return res.status(200).json({ 
-        status: 'ERROR',
-        error: true, 
-        message: 'No session found' 
-      });
-    }
-  });
+  // server.get('/play/:id', () => {
 
-  // Protected route example (only accessible when logged in)
-  // server.get('/protected', (req, res) => {
-  //   if (!req.session.user) {
-  //     return res.status(200).json({ error: true, message: 'Unauthorized access' });
-  //   }
-
-  //   return res.status(200).json({ message: `Hello ${req.session.user.username}` });
   // });
-
-  // server.get('/media-player', (req, res) => {
-  //   if (!req.session.user) {
-  //     return res.status(200).json({ error: true, message: 'Unauthorized access' });
-  //   }
-  //   res.sendFile(path.join(__dirname, 'media-player.html'));
-  // });
-
+  
   // get manifest file
   server.get('/media/output.mpd', (req, res) => {
-    if (req.session.loggedIn){
-      res.sendFile('media/4781506-uhd_4096_2160_25fps.mpd', {root: __dirname});
-    }
-    else {
-      res.status(200).json({
-        status: 'ERROR',
-        error: true,
-        message: 'Unauthorized'
-      });
-    }
+    // if (req.session.loggedIn){
+      res.sendFile('media/5992350-hd_1920_1080_30fps.mpd', {root: __dirname});
+    // }
+    // else {
+    //   res.status(200).json({
+    //     status: 'ERROR',
+    //     error: true,
+    //     message: 'Unauthorized'
+    //   });
+    // }
   });
 
   // get chunks
   server.get(['/media/*', /(css|scripts)/], (req, res) => {
 
-    if (req.session.loggedIn) {
+    // if (req.session.loggedIn) {
       res.sendFile(req.path, {root: __dirname});
-    }
-    else {
-      res.status(200).json({
-        status: 'ERROR',
-        error: true,
-        message: 'Unauthorized'
-      });
-    }
+    // }
+    // else {
+    //   res.status(200).json({
+    //     status: 'ERROR',
+    //     error: true,
+    //     message: 'Unauthorized'
+    //   });
+    // }
   });
 
   // Handle any other Next.js route

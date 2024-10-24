@@ -21,8 +21,17 @@ const User = sequelize.define('Users',
       type: DataTypes.STRING,
       allowNull: false,
     },
+    salt: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     key: {
         type: DataTypes.STRING
+    },
+    userId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
     }
   },
   {
@@ -44,7 +53,7 @@ const User = sequelize.define('Users',
 const init = async () => {
     try {
         await sequelize.sync({
-          alter: true
+          force: true
         }); // Create the table if it doesn't exist
         console.log('Database & tables created!');
     } catch (error) {
