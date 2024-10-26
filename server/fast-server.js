@@ -22,15 +22,8 @@ app.register(fastifySession, {
     store: new SQLite({ db: 'sessions.sqlite', dir: './sessions' })
 });
 
-// X-CSE356 Header
-app.addHook("preHandler", (req, reply, done) => {
-    reply.header('X-CSE356', '66d1284d7f77bf55c5003d5a');
-    done();
-})
-
-const apiRoutes = require("./fast-api"); 
-
-app.register(apiRoutes, { prefix: '/api'});
+// add API routes
+app.register(require("./fast-api"), { prefix: 'api'});
 
 app.get('/', (request, reply) => {
     if (request.session.loggedIn) {

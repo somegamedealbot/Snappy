@@ -53,7 +53,8 @@ const User = sequelize.define('Users',
 const init = async () => {
     try {
         await sequelize.sync({
-          force: true
+          // force: true
+          // alter
         }); // Create the table if it doesn't exist
         console.log('Database & tables created!');
     } catch (error) {

@@ -4,46 +4,56 @@ const crypto = require('crypto');
 const {sequelize, User} = require("./dbsetup");
 const {sendMail} = require("./sendmail");
 const {v7: uuidv7} = require('uuid');
+const fs = require('fs');
+const path = require('path');
 /**
  * @param {fastify.FastifyInstance} fastify 
  * @param {*} options 
  */
-module.exports = async (fastify, options) => {
+async function apiRoutes(fastify, options){
+
+    // hook for auth on certain paths if needed 
+    // fastify.addHook('onRequest', async (request, replay, done) => {
+
+    // })
+
+    fastify.get('/example', async (request, reply) => {
+        return { message: 'This is an example route' };
+      });
 
     fastify.post('/adduser', async (request, reply) => {
-        const {username, email, password} = request.body
+        let {username, email, password} = request.body
         try {
-        
-        const key = crypto.randomBytes(32).toString('hex');
-        const salt = await bcrypt.genSalt();
-        password = await bcrypt.hash(password, salt);
-        const userId = uuidv7();
-        const disabled_user = User.build({
-            username,
-            email, 
-            password,
-            salt,
-            key,
-            userId
-        });
-        
-        await disabled_user.save();
-        
-        // send email to target
-        await sendMail(email, key);
-        reply.status(200).send({
-            status: 'OK',
-            message: 'Successfully created account.'
-        });
+            const key = crypto.randomBytes(32).toString('hex');
+            const salt = await bcrypt.genSalt();
+            password = await bcrypt.hash(password, salt);
+            const userId = uuidv7();
+            const disabled_user = User.build({
+                username,
+                email, 
+                password,
+                salt,
+                key,
+                userId
+            });
+            
+            await disabled_user.save();
+            
+            // send email to target
+            await sendMail(email, key);
+            return reply.status(200).send({
+                status: 'OK',
+                message: 'Successfully created account.'
+            });
         }
         
         catch(err) {
-        console.log('Unable to create user', err)
-        reply.status(200).send({
-            status: 'ERROR',
-            error: true,
-            message: 'Could not create user because username or email is taken, or internal error'
-        });
+            console.log('Unable to create user', err)
+            return reply.status(200).send({
+                status: 'ERROR',
+                error: true,
+                message: 'Could not create user because username or email is taken, or internal error'
+            });
         }
         
     });
@@ -52,28 +62,34 @@ module.exports = async (fastify, options) => {
         const {email, key} = request.query;
         
         try {
-        const user = await User.findOne({
-            where: {email}
-        });
-        // Successful login
-        if (user && user.key == key){
-            user.key = null;
-            await user.save();
-            reply.status(200).send({
-            status: 'OK',
-            message: 'Account successfully verified.'
+            const user = await User.findOne({
+                where: {email}
             });
-        }
-        else {
-            reply.status(200).send({
-            status: 'ERROR',
-            error: true,
-            message: 'Account already verified.'
+            // Successful login
+
+            request.log.info({
+                'provided-key': key,
+                'actual-key': user.key 
             });
-        }
+
+            if (user && user.key == key){
+                user.key = null;
+                await user.save();
+                return reply.status(200).send({
+                status: 'OK',
+                message: 'Account successfully verified.'
+                });
+            }
+            else {
+                return reply.status(200).send({
+                status: 'ERROR',
+                error: true,
+                message: 'Account already verified.'
+                });
+            }
         }
         catch (error) {
-        reply.status(200).send({
+            return reply.status(200).send({
             status: 'ERROR',
             error: true,
             message: 'Unable to verify account',
@@ -96,13 +112,13 @@ module.exports = async (fastify, options) => {
             if (isPasswordValid) {
             request.session.loggedIn = true;
             request.session.userId = user.userId;
-            reply.status(200).send({
+            return reply.status(200).send({
                 status: 'OK', 
                 message: 'Successfully logged in.'
             });
             }
             else {
-            reply.status(200).send({
+            return reply.status(200).send({
                 status: 'ERROR',
                 error: true,
                 message: 'Unable to login, username or password was incorrect.'
@@ -110,7 +126,7 @@ module.exports = async (fastify, options) => {
             }
         }
         else {
-            reply.status(200).send({
+            return reply.status(200).send({
             status: 'ERROR',
             error: true,
             message: 'Unable to login, account is not activated.'
@@ -120,7 +136,7 @@ module.exports = async (fastify, options) => {
         }
         catch (err) {
         console.error('Error when finding user', err);
-        reply.status(500).send({
+        return reply.status(500).send({
             status: 'ERROR',
             error: true,
             message: 'Error accessing database.'
@@ -134,7 +150,7 @@ module.exports = async (fastify, options) => {
         if (request.session?.loggedIn) {
         request.session.destroy(err => {
             if (err) {
-            return reply.status(200).send({
+                return reply.status(200).send({
                 status: 'ERROR',
                 error: true, 
                 message: 'Logout failed' 
@@ -174,14 +190,57 @@ module.exports = async (fastify, options) => {
     })
     
     fastify.post('/videos', (request, reply) => {
-    
+        const count = parseInt(request.body.count); 
+        const videos = fs.readdirSync(path.join(process.env.VIDEO_LOCATIONS, 'thumbnails'));
+        const vidsInfo = []
+        // randomly select videos
+        for (let i = 0; i < count; i++){
+            vidsInfo.push({
+                id: videos[crypto.randomInt(0, videos.length)].split('.')[0],
+                metadata: {
+                    title: 'title',
+                    description: 'description'
+                }
+            });
+        }
+
+        return reply.send(vidsInfo);
     });
     
     fastify.get('/manifest/:id', (request, reply) => {
-    
+        const id = request.params.id;
+        const folderPath = './media/manifests/' + id + '.mpd';
+        // request.log.info([process.cwd(), __dirname]);
+        // request.log.info({'Folder Path': folderPath });
+        // const videos = fs.readdirSync(path.join(__dirname, folderPath));
+        // const manifestFile = videos.find((vid) => {
+        //     return path.extname(vid) === '.mpd'
+        // });
+
+        // if (manifestFile) {
+        //     request.log.info({
+        //         'Manifest Path': path.join(folderPath, manifestFile)
+        //     });
+
+        // TODO: check if file exists first
+
+        return reply.sendFile(folderPath);
+        // }
+        // else {
+        //     reply.status(404).send({
+        //         status: 'ERROR',
+        //         error: true, 
+        //         message: 'Manifest not found',
+        //         videos: videos,
+        //         // found: manifestFile
+        //     });
+        // }
+
     });
     
     fastify.get('/thumbnail/:id', (request, reply) => {
     
     });
 }
+
+module.exports = apiRoutes
