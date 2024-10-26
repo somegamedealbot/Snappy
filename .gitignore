@@ -7,7 +7,6 @@
 .yarn/install-state.gz
 /videos
 /media
-/tiktok-frontend
 # testing
 /coverage
 
