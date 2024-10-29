@@ -328,6 +328,7 @@ html,body{
     width:100%;
     height:100%;  
 }
+
 video#videoPlayer{
     display: block;
 }
@@ -342,3 +343,23 @@ video#videoPlayer{
     left: 50%;
     transform: translate(-50%, -50%); 
 }
+
+
+/* grid-layout.css */
+.thumbnail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    grid-template-rows: repeat(2, auto);  /* 2 rows */
+    gap: 20px; /* Adds some space between the grid items */
+    padding: 20px;
+  }
+  
+  .thumbnail-item {
+    text-align: center; /* Centering the content inside each grid item */
+  }
+  
+  .thumbnail-item img {
+    max-width: 100%; /* Ensure the images fit within their containers */
+    height: auto;
+  }
+  

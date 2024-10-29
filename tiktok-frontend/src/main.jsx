@@ -1,25 +1,39 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider} from "react-router-dom";
-import './index.css'
 import RootPage from './pages/Root.jsx'
-import LoginPage from './pages/Login.jsx';
 import SignUp from './pages/SignUp.jsx';
 import Player from './components/Player';
 import axios from 'axios';
 
 const baseURL = "http://wbill.cse356.compas.cs.stonybrook.edu";
+const folder = '../var/www/media'
 axios.defaults.baseURL = baseURL;
+
+const InitializedArray = [];
 
 const router = createBrowserRouter([
   {
     path: "/",
+    loader: async ({params}) => {
+      const count = 10;
+      try{
+        const response = await axios.post(`${baseURL}/api/videos`, { count });
+        const videoObjects = response.data.videos;
+        console.log(videoObjects);
+        return videoObjects ? videoObjects : null;
+      }catch(error){
+        console.error("Error fetching video URLs", error);
+        return null;
+        // throw new Error("Failed to load video URLs");
+      }
+    },
     element: <RootPage></RootPage>
   }, 
-  {
-    path: "/login",
-    element: <LoginPage></LoginPage>
-  },
+  // {
+  //   path: "/login",
+  //   element: <LoginPage></LoginPage>
+  // },
   {
     path: "/signup",
     element: <SignUp></SignUp>
@@ -27,7 +41,19 @@ const router = createBrowserRouter([
   {
     path: "/play/:id",
     loader: async ({params}) => {
-      return `${baseURL}/api/manifest/${params.id}`;
+      const count = 4;
+      try{
+        const response = await axios.post(`${baseURL}/api/videos`, { count });
+        const videoObjects = response.data.videos;
+        const videoUrls = videoObjects.map(video => `${baseURL}/api/manifest/${video.id}`)
+        const videoArray = [`${baseURL}/api/manifest/${params.id}`, ...videoUrls];
+        console.log(videoArray)
+        return videoArray;
+      }catch(error){
+        console.error("Error fetching video URLs", error);
+        // throw new Error("Failed to load video URLs");
+        return null;
+      }
     },
     element: <Player></Player>
   }

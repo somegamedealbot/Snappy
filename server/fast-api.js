@@ -6,6 +6,9 @@ const {sendMail} = require("./sendmail");
 const {v7: uuidv7} = require('uuid');
 const fs = require('fs');
 const path = require('path');
+
+const metadata = JSON.parse(fs.readFileSync(process.env.METADATA_LOCATION));
+
 /**
  * @param {fastify.FastifyInstance} fastify 
  * @param {*} options 
@@ -13,8 +16,13 @@ const path = require('path');
 async function apiRoutes(fastify, options){
 
     // hook for auth on certain paths if needed 
-    // fastify.addHook('onRequest', async (request, replay, done) => {
+    // fastify.addHook('onRequest', async (request, replay) => {
+    //     request.rout
+    //     const reqAuth = new Set([
+    //         '/videos',
+    //         '/manifest',
 
+    //     ])
     // })
 
     fastify.get('/example', async (request, reply) => {
@@ -75,12 +83,14 @@ async function apiRoutes(fastify, options){
             if (user && user.key == key){
                 user.key = null;
                 await user.save();
+                // return reply.redirect('http://wbill.cse356.compas.cs.stonybrook.edu/login')
                 return reply.status(200).send({
                 status: 'OK',
                 message: 'Account successfully verified.'
                 });
             }
             else {
+                // return reply.redirect('http://wbill.cse356.compas.cs.stonybrook.edu/login')
                 return reply.status(200).send({
                 status: 'ERROR',
                 error: true,
@@ -148,7 +158,7 @@ async function apiRoutes(fastify, options){
     fastify.post('/logout', (request, reply) => {
         // checks if user's session is logged in
         if (request.session?.loggedIn) {
-        request.session.destroy(err => {
+            request.session.destroy(err => {
             if (err) {
                 return reply.status(200).send({
                 status: 'ERROR',
@@ -190,56 +200,81 @@ async function apiRoutes(fastify, options){
     })
     
     fastify.post('/videos', (request, reply) => {
-        const count = parseInt(request.body.count); 
-        const videos = fs.readdirSync(path.join(process.env.VIDEO_LOCATIONS, 'thumbnails'));
-        const vidsInfo = []
-        // randomly select videos
-        for (let i = 0; i < count; i++){
-            vidsInfo.push({
-                id: videos[crypto.randomInt(0, videos.length)].split('.')[0],
-                metadata: {
-                    title: 'title',
-                    description: 'description'
+        if (request.session?.loggedIn) {
+            const count = parseInt(request.body.count); 
+            const videos = fs.readdirSync(path.join(__dirname, 'media', 'thumbnails'));
+            const vidsInfo = []
+            // randomly select videos
+            const metadataKeys = Object.keys(metadata)
+            
+            const used = {};
+            
+            for (let i = 0; i < count; i++){
+                
+                // ensure no repeats
+                let filename = metadataKeys[crypto.randomInt(0, metadataKeys.length)]
+                while (used[filename] !== undefined){
+                    filename = metadataKeys[crypto.randomInt(0, metadataKeys.length)]
                 }
+                used[filename] = true;
+
+                const id = filename.split('.')[0]
+                used[filename] = true;
+                vidsInfo.push({
+                    id: id,
+                    metadata: {
+                        title: filename,
+                        description: metadata[filename]
+                    }
+                });
+            }
+            return reply.send({
+                videos: vidsInfo,
+                status: 'OK'
             });
         }
-
-        return reply.send(vidsInfo);
+        else {
+            return reply.status(200).send({ 
+                status: 'ERROR',
+                error: true, 
+                message: 'Not logged in.'
+            });
+        }
     });
-    
+
     fastify.get('/manifest/:id', (request, reply) => {
-        const id = request.params.id;
-        const folderPath = './media/manifests/' + id + '.mpd';
-        // request.log.info([process.cwd(), __dirname]);
-        // request.log.info({'Folder Path': folderPath });
-        // const videos = fs.readdirSync(path.join(__dirname, folderPath));
-        // const manifestFile = videos.find((vid) => {
-        //     return path.extname(vid) === '.mpd'
-        // });
-
-        // if (manifestFile) {
-        //     request.log.info({
-        //         'Manifest Path': path.join(folderPath, manifestFile)
-        //     });
-
-        // TODO: check if file exists first
-
-        return reply.sendFile(folderPath);
-        // }
-        // else {
-        //     reply.status(404).send({
-        //         status: 'ERROR',
-        //         error: true, 
-        //         message: 'Manifest not found',
-        //         videos: videos,
-        //         // found: manifestFile
-        //     });
-        // }
-
+        if (request.session?.loggedIn) {
+            const id = request.params.id;
+            const idSplit = id.split('.');
+            // gets the file extension
+            // by default its .mpd
+            const ext = idSplit.length > 1 ? '' : '.mpd';
+            const folderPath = './media/manifests/' + id + ext;
+            request.log.info({filename: folderPath});
+            return reply.sendFile(folderPath);
+        }
+        else {
+            return reply.status(200).send({ 
+                status: 'ERROR',
+                error: true, 
+                message: 'Not logged in.'
+            });
+        }
     });
     
     fastify.get('/thumbnail/:id', (request, reply) => {
-    
+        if (request.session?.loggedIn) {
+            const id = request.params.id;
+            const folderPath = './media/thumbnails/' + id + '.jpg';
+            return reply.sendFile(folderPath);
+        }
+        else {
+            return reply.status(200).send({ 
+                status: 'ERROR',
+                error: true, 
+                message: 'Not logged in.'
+            });
+        }
     });
 }
 
