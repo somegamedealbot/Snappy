@@ -1,6 +1,7 @@
 const fastify = require('fastify');
 const fastifySession = require('@fastify/session');
 const SQLite = require('connect-sqlite3')(fastifySession);
+const { authApiRoutes, unauthApiRoutes} = require('./fast-api');
 
 const app = fastify({
     logger: true
@@ -23,22 +24,8 @@ app.register(fastifySession, {
 });
 
 // add API routes
-app.register(require("./fast-api"), { prefix: 'api'});
-
-app.get('/', (request, reply) => {
-    if (request.session.loggedIn) {
-        reply.status(200).sendFile('/public/media.html');
-    }
-    else {
-        // reply.status(200);
-        reply.redirect('/login')
-        // reply.send({
-        //     status: 'ERROR',
-        //     error: true,
-        //     message: 'Client not logged in'
-        // });
-    }
-});
+app.register(authApiRoutes, { prefix: 'api'});
+app.register(unauthApiRoutes, { prefix: 'api'});
 
 app.get('/login', (request, reply ) => {
     reply.sendFile('/public/login.html');
