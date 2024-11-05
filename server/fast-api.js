@@ -280,9 +280,14 @@ async function authApiRoutes(fastify, options){
 
     })
 
-    fastify.post('/upload', (request, reply) => {
+    // figure out whether to use a different server for this part
+    // fastify.post('/upload', (request, reply) => {
 
-    })
+    // })
+    fastify.register(require('@fastify/http-proxy'), {
+        upstream: `http://${process.env.UPLOAD_SERVER}`,
+        prefix: '/upload',
+    });
 
     fastify.post('/view', async (request, reply) => {
         const video_id = request.body.id;
