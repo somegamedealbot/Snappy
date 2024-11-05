@@ -2,6 +2,7 @@ const fastify = require('fastify');
 const fastifySession = require('@fastify/session');
 const SQLite = require('connect-sqlite3')(fastifySession);
 const { authApiRoutes, unauthApiRoutes} = require('./fast-api');
+const initDb = require('./db/initDb');
 
 const app = fastify({
     logger: true
@@ -12,6 +13,9 @@ app.register(require('@fastify/formbody'));
 app.register(require('@fastify/static'), {
     root: __dirname
 })
+
+// setup database first
+await initDb();
 
 app.register(fastifySession, {
     secret: '37128405562571910855469555330269',
