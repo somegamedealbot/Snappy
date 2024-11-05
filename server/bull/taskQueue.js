@@ -8,10 +8,6 @@ const redisConfig = {
     port: 6379,        // Redis server port
 }
 
-const uploadQueue = new Queue('uploadQueue', {
-    redis: redisConfig
-});
-
 const taskQueue = new Queue('videoQueue', {
     redis: redisConfig
 });
@@ -20,14 +16,6 @@ const taskQueue = new Queue('videoQueue', {
 if (!fs.existsSync('/root/cse-356-warmup-project-2/mpds/')) {
     fs.mkdirSync('/root/cse-356-warmup-project-2/mpds/');
 }
-
-uploadQueue.process(1, (job) => {
-
-    // return new Promise((resolve, reject) => {
-
-    // })
-
-})
 
 taskQueue.process(5 , (job) => {
     const {title, mp4_location, id} = job.data;
