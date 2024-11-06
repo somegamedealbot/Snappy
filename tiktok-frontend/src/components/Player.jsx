@@ -14,6 +14,31 @@ function Player() {
     const playerRef = useRef(null);  // Ref to hold the Dash.js player instance
     const navigate = useNavigate();  // For changing the URL
 
+    const [userReaction, setUserReaction] = useState(null);  // Track user reaction: true, false, or null
+    const [viewedVideos, setViewedVideos] = useState(new Set()); // Track videos marked as viewed
+
+    const updateReaction = async (value) => {
+        try {
+            const response = await axios.post('/api/like', { id: mpdUrl[currentVideoIndex], value });
+            setLikeCount(response.data.likes);  // Update like count from the response
+            setUserReaction(value);  // Update user reaction
+        } catch (error) {
+            console.error('Error updating reaction:', error);
+        }
+    };
+
+    const handleLike = () => {
+        if (userReaction !== true) {
+            updateReaction(true);
+        }
+    };
+
+    const handleDislike = () => {
+        if (userReaction !== false) {
+            updateReaction(false);
+        }
+    };
+
     // Function to initialize and load the video by index
     const loadVideo = (index) => {
         if (!mpdUrl[index]) return;  // Prevent loading if the index is out of bounds
@@ -37,6 +62,23 @@ function Player() {
         // Update the URL with the current video ID
         const videoId = mpdUrl[index].split('/').pop();  // Extract video ID from URL
         navigate(`/play/${videoId}`, { replace: true });
+        markVideoAsViewed(videoId);
+    };
+    const markVideoAsViewed = async (videoId) => {
+        if (viewedVideos.has(videoId)) {
+            return; // Skip if video is already marked as viewed
+        }
+
+        try {
+            const response = await axios.post('/api/view', { id: videoId });
+            if (response.data.viewed === false) {
+                setViewedVideos((prev) => new Set(prev).add(videoId)); // Add to viewed set if new
+                console.log(`Video ${videoId} marked as viewed`);
+            }
+            
+        } catch (error) {
+            console.error('Error marking video as viewed:', error);
+        }
     };
 
     // UseEffect to load the video when currentVideoIndex changes
@@ -135,6 +177,24 @@ function Player() {
                         <span id="iconPlayPause" className="icon-play"></span>
                     </div>
                     <span id="videoTime" className="time-display">00:00:00</span>
+
+
+
+                    <button id="likeBtn" className="btn-like control-icon-layout" title="Like" onClick={handleLike}>
+                        <span className="icon-like"></span> {likeCount} Likes
+                    </button>
+                    <button id="thumbsDownBtn" className="btn-thumbs-down control-icon-layout" title="Dislike" onClick={handleDislike}>
+                        <span className="icon-thumbs-down"></span> {dislikeCount} Dislikes
+                    </button>
+
+                    <div id="viewCount" className="view-count control-icon-layout" title="Views">
+                        <span className="icon-view"></span>
+                        <span className="view-count-text">0</span> {/* Default view count */}
+                    </div>
+
+
+
+
                     <div id="fullscreenBtn" className="btn-fullscreen control-icon-layout" title="Fullscreen">
                         <span className="icon-fullscreen-enter"></span>
                     </div>

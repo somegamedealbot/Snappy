@@ -362,4 +362,70 @@ video#videoPlayer{
     max-width: 100%; /* Ensure the images fit within their containers */
     height: auto;
   }
+
+
+
+  /* Style for Like Button */
+/* Style for Like Button */
+#likeBtn {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 8px;
+    padding: 4px 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#likeBtn:hover {
+    background-color: #e0e0e0;
+}
+
+.icon-like::before {
+    content: "👍";  /* Replace with an icon if you have one */
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+/* Style for Thumbs Down Button */
+#thumbsDownBtn {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 8px;
+    padding: 4px 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#thumbsDownBtn:hover {
+    background-color: #e0e0e0;
+}
+
+.icon-thumbs-down::before {
+    content: "👎";  /* Replace with an icon if you have one */
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+
+/* Style for View Count */
+.view-count {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+}
+
+.icon-view::before {
+    content: "👁️";  /* Replace with your view icon if you have one */
+    font-size: 16px;
+    margin-right: 4px;
+}
+
+.view-count-text {
+    font-size: 14px;
+}
+
   
