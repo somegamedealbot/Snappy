@@ -15,7 +15,7 @@ app.register(require('@fastify/static'), {
 })
 
 // setup database first
-await initDb();
+initDb();
 
 app.register(fastifySession, {
     secret: '37128405562571910855469555330269',

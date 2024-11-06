@@ -1,28 +1,84 @@
 const fs = require('fs');
-const {Video, sequelize} = require('./db/schemas');
+const {Video, User, sequelize} = require('./db/schemas');
 // load in videos metadata
+require('dotenv').config();
 const metadata = JSON.parse(fs.readFileSync(process.env.METADATA_LOCATION));
 const {v7: uuidv7} = require('uuid');
 
-const { taskQueue, uploadQueue } = require('./bull/taskQueue');
+const { taskQueue } = require('./bull/taskQueue');
 
 const keys = Object.keys(metadata);
 
-for (const key of keys){
-    const vidId = uuidv7();
-    const title = key.split('.')[0];
-    const newVideo = Video.build({
-        id: vidId,
-        title,
-        author: 'unknown', // for now
-    });
+// create video-info.json file if it doesn't exist
+if (!fs.existsSync('../video-info.json')) {
 
-    await newVideo.save();
-
-    // send to bull for processing
-    taskQueue.add({
-        mp4_location: `/root/videos/${key}`,
-        id: vidId,
-    });
+    const videoInfo = {};
+    // build json file
+    for (const key of keys){
+        const vidId = uuidv7();
+        const title = key.split('.')[0];
+        const description = metadata[key];
+        
+        videoInfo[vidId] = {
+            title,
+            description,
+            filename: key,
+            author: 'admin' // for now
+        }
+        
+    }
     
+    // write to json file
+    fs.writeFileSync('../video-info.json', JSON.stringify(videoInfo));
+
 }
+
+(async () => {
+
+    const videoInfo = JSON.parse(fs.readFileSync('../video-info.json'));
+    const videoKeys = Object.keys(videoInfo);
+    for (const id of videoKeys){
+        const { title, description, author, filename } = videoInfo[id]; 
+        // const vidId = uuidv7();
+        // const title = key.split('.')[0];
+        // const description = metadata[key];
+
+        let admin = await User.findOne({
+            where: {
+              username: author  
+            }
+        });
+
+        const newVideo = Video.build({
+            id,
+            title,
+            description,
+            author, // for now
+            author_id: admin.userId
+        });
+
+        // videoInfo[vidId] = { title, description, author: 'admin' };
+        // fs.writeFileSync('../video-info.json', JSON.stringify(videoInfo));
+
+        await newVideo.save();
+        // console.log(vidId)
+        // console.log(newVideo.id);
+        // send to bull for processing
+        await taskQueue.add({
+            title,
+            description,
+            mp4_location: `/root/videos/${filename}`,
+            id,
+        }, {
+            attempts: 3
+        });
+
+        console.log(`Added task: [${title}]:${id}`);
+    }
+
+    // close queue gracefully
+    taskQueue.on("drained", async () => {
+        await taskQueue.close();
+    });
+
+})();
