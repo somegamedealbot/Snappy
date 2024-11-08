@@ -36,11 +36,7 @@ if (!fs.existsSync(process.env.THUMBNAILS_LOCATION)) {
     fs.mkdirSync(process.env.THUMBNAILS_LOCATION);
 }
 
-// if (!fs.existsSync('../video-info.json')) {
-//     fs.writeFileSync('../video-info.json', JSON.stringify(JSON.parse('{}')));
-// }
-
-taskQueue.process(1, async (job, done) => {
+taskQueue.process(5, async (job, done) => {
     const {title, description, mp4_location, id} = job.data;
     // const mpdLocation = `${process.env.MPD_LOCATION}/${id}.mpd`
     // const segmentLocation = `${process.env.SEGMENTS_LOCATION}/${id}/segments`
@@ -70,18 +66,6 @@ taskQueue.process(1, async (job, done) => {
     -vf "pad=width=max(iw\\,ih*(16/9)):height=ow/(16/9):x=(ow-iw)/2:y=(oh-ih)/2" \\
     -f dash "${process.env.SEGMENTS_LOCATION}/${id}/${id}.mpd"`;
     
-        // const execHandler = (error, stdout, stderr) => {
-        //     if (error) {
-        //         // console.error(`Error: ${error.message}`);
-        //         return reject(`Error: ${error.message}`) 
-        //     }
-        //     if (stderr) {
-        //         // console.error(`FFmpeg stderr: ${stderr}`);
-        //         return reject(`FFmpeg stderr: ${stderr}`)
-        //     }
-        //     console.log(`FFmpeg stdout: ${stdout}`);
-        //     // resolve(`FFmpeg stdout: ${stdout}`);
-        // } 
 
         await execP(processCmd);
 
@@ -90,23 +74,18 @@ taskQueue.process(1, async (job, done) => {
     -frames:v 1 ${thumbnailLocation}`
  
 // execute thumbnail creation command
-        await execP(thumbnailCmd);
+    await execP(thumbnailCmd);
 
-        // update SQL database
-        const video = await Video.findByPk(id);
-        // console.log(videos);
-        console.log(`Processed ${title} (${id})!`);
-        // set uploaded flag
-        video.uploaded = true;
-        await video.save();
+    // update SQL database
+    const video = await Video.findByPk(id);
+    // console.log(videos);
+    console.log(`Processed ${title} (${id})!`);
+    // set uploaded flag
+    video.uploaded = true;
+    await video.save();
 
-        done();
+    done();
 
-    // return new Promise(async (resolve, reject) => {
-        
-
-    //     resolve(`Done processing video with id: ${id}!`);
-    // })
 })
 
 module.exports = {

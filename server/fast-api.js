@@ -1,7 +1,7 @@
 const fastify = require('fastify');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const { User, Video, Like, View } = require("./db/schemas");
+const { User, Video, Like, View, sequelize } = require("./db/schemas");
 const {sendMail} = require("./sendmail");
 const {v7: uuidv7} = require('uuid');
 const fs = require('fs');
@@ -144,6 +144,10 @@ async function unauthApiRoutes(fastify, options){
  */
 async function authApiRoutes(fastify, options){
 
+    fastify.register(require('@fastify/static'), {
+        root: process.env.MPD_LOCATION
+    });
+
     // hook for auth on certain paths if needed 
     fastify.addHook('onRequest', async (request, reply) => {
         if (!request.session?.loggedIn) {
@@ -186,34 +190,27 @@ async function authApiRoutes(fastify, options){
         });
     })
     
-    fastify.post('/videos', (request, reply) => {
-        const count = parseInt(request.body.count); 
-        const videos = fs.readdirSync(path.join(__dirname, 'media', 'thumbnails'));
+    fastify.post('/videos', async (request, reply) => {
+        const count = parseInt(request.body.count);
         const vidsInfo = []
-        // randomly select videos
-        const metadataKeys = Object.keys(metadata)
         
-        const used = {};
-        
-        for (let i = 0; i < count; i++){
-            
-            // ensure no repeats
-            let filename = metadataKeys[crypto.randomInt(0, metadataKeys.length)]
-            while (used[filename] !== undefined){
-                filename = metadataKeys[crypto.randomInt(0, metadataKeys.length)]
-            }
-            used[filename] = true;
+        // temporary randomly select videos
+        const videos = await Video.findAll({
+            order: sequelize.random(),
+            group: 'id',
+            limit: count,
+        });
 
-            const id = filename.split('.')[0]
-            used[filename] = true;
+        for (const vid of videos) {
             vidsInfo.push({
-                id: id,
+                id: vid.id,
                 metadata: {
-                    title: filename,
-                    description: metadata[filename]
+                    title: vid.title,
+                    description: vid.description
                 }
             });
         }
+
         return reply.send({
             videos: vidsInfo,
             status: 'OK'
@@ -222,19 +219,18 @@ async function authApiRoutes(fastify, options){
 
     fastify.get('/manifest/:id', (request, reply) => {
         const id = request.params.id;
-        const idSplit = id.split('.');
-        // gets the file extension
-        // by default its .mpd
-        const ext = idSplit.length > 1 ? '' : '.mpd';
-        const folderPath = './media/manifests/' + id + ext;
-        request.log.info({filename: folderPath});
-        return reply.sendFile(folderPath);
+        const filename = id + '.mpd';
+        const folderPath = process.env.MPD_LOCATION + '/' + id;
+        
+        request.log.info({filePath: folderPath + filename});
+        return reply.sendFile(filename, folderPath);
     });
     
     fastify.get('/thumbnail/:id', (request, reply) => {
         const id = request.params.id;
-        const folderPath = './media/thumbnails/' + id + '.jpg';
-        return reply.sendFile(folderPath);
+        const filename = id + '.jpg';
+        const folderPath = process.env.MPD_LOCATION + '/' + id;
+        return reply.sendFile(filename, folderPath);
     });
 
     // Like value = true, false, null

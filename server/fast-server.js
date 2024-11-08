@@ -10,9 +10,6 @@ const app = fastify({
 
 app.register(require('@fastify/cookie'));
 app.register(require('@fastify/formbody'));
-app.register(require('@fastify/static'), {
-    root: __dirname
-})
 
 // setup database first
 initDb();

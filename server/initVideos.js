@@ -39,9 +39,6 @@ if (!fs.existsSync('../video-info.json')) {
     const videoKeys = Object.keys(videoInfo);
     for (const id of videoKeys){
         const { title, description, author, filename } = videoInfo[id]; 
-        // const vidId = uuidv7();
-        // const title = key.split('.')[0];
-        // const description = metadata[key];
 
         let admin = await User.findOne({
             where: {
@@ -57,13 +54,8 @@ if (!fs.existsSync('../video-info.json')) {
             author_id: admin.userId
         });
 
-        // videoInfo[vidId] = { title, description, author: 'admin' };
-        // fs.writeFileSync('../video-info.json', JSON.stringify(videoInfo));
-
         await newVideo.save();
-        // console.log(vidId)
-        // console.log(newVideo.id);
-        // send to bull for processing
+
         await taskQueue.add({
             title,
             description,
@@ -79,6 +71,7 @@ if (!fs.existsSync('../video-info.json')) {
     // close queue gracefully
     taskQueue.on("drained", async () => {
         await taskQueue.close();
+        console.log('Finished Processing Videos!');
     });
 
 })();
