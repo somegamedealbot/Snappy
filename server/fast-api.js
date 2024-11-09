@@ -191,30 +191,49 @@ async function authApiRoutes(fastify, options){
     })
     
     fastify.post('/videos', async (request, reply) => {
+        const maxRetries = 3;
+        let attempt = 0;
         const count = parseInt(request.body.count);
         const vidsInfo = []
-        
-        // temporary randomly select videos
-        const videos = await Video.findAll({
-            order: sequelize.random(),
-            group: 'id',
-            limit: count,
-        });
-
-        for (const vid of videos) {
-            vidsInfo.push({
-                id: vid.id,
-                metadata: {
-                    title: vid.title,
-                    description: vid.description
+        while (attempt < maxRetries) {
+            try {
+                // temporary randomly select videos
+                const videos = await Video.findAll({
+                    order: sequelize.random(),
+                    group: 'id',
+                    limit: count,
+                });
+    
+                for (const vid of videos) {
+                    vidsInfo.push({
+                        id: vid.id,
+                        metadata: {
+                            title: vid.title,
+                            description: vid.description
+                        }
+                    });
                 }
-            });
-        }
+    
+                return reply.send({
+                    status: 'OK',
+                    videos: vidsInfo
+                });
+            }
 
-        return reply.send({
-            status: 'OK',
-            videos: vidsInfo
-        });
+            catch(error) {
+                attempt += 1;
+                request.log.warn(`Attempt ${attempt} failed: ${error.message}`);
+    
+                // If all retries fail, log the error and send a 500 response
+                if (attempt === maxRetries) {
+                    request.log.error('Max retry attempts reached.');
+                    return reply.code(500).send({
+                        status: 'ERROR',
+                        message: 'Failed to retrieve videos after multiple attempts',
+                    });
+                }
+            }
+        }
     });
 
     fastify.get('/manifest/:id', (request, reply) => {
