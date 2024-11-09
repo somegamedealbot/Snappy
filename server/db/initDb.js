@@ -1,6 +1,7 @@
 const { sequelize, User, Video, View, Like } = require('./schemas');
 const bcrypt = require('bcryptjs');
 const {v7: uuidv7} = require('uuid');
+const loadData = require('./loadData');
 
 const init = async () => {
 
@@ -8,30 +9,32 @@ const init = async () => {
 
       // One to many relationship User:Video
       User.hasMany(Video, {foreignKey: 'author_id'});
-      Video.belongsTo(User);
+      Video.belongsTo(User, {foreignKey: 'author_id'});
 
       // One to many relationship User:View and Video:View
       User.hasMany(View, {foreignKey: 'user_id'});
       Video.hasMany(View, {foreignKey: 'video_id'});
-      View.belongsTo(User);
-      View.belongsTo(Video);
+      View.belongsTo(User, {foreignKey: 'user_id'});
+      View.belongsTo(Video, {foreignKey: 'video_id'});
 
       // One to many relationshop User:Like and Video:Like
       User.hasMany(Like, {foreignKey: 'user_id'}); 
       Video.hasMany(Like, {foreignKey: 'video_id'});
-      Like.belongsTo(User);
-      Like.belongsTo(Video);
+      Like.belongsTo(User, {foreignKey: 'user_id'});
+      Like.belongsTo(Video, {foreignKey: 'video_id'});
+
+      const force = true;
 
       await sequelize.sync({
         // force: true,
-        force: true
+        force: force
         // alter: true
         // alter
       }); // Create the table if it doesn't exist
       console.log('Database & tables created!');
-      
+
       const salt = await bcrypt.genSalt();
-      const password = await bcrypt.hash('passowrd', salt);
+      const password = await bcrypt.hash('password', salt);
 
       // check if admin user already exists
 
@@ -47,13 +50,17 @@ const init = async () => {
           email: 'admin@test.com',
           password: password,
           key: null,
-          userId: uuidv7()
+          userId: "01930e5b-f5ca-7dda-9b97-ff9e2532ba4b" // fixed uuidv7()
         });
         await admin.save();
+        console.log('Created admin user!');
+      }
+
+      if (force){
+        // run the loadData function
+        await loadData();
       }
       
-      console.log('Created admin user!');
-
     } catch (error) {
       console.error('Unable to create tables:', error);
     }
