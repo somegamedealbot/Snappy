@@ -14,56 +14,103 @@ function Player() {
     const playerRef = useRef(null);  // Ref to hold the Dash.js player instance
     const navigate = useNavigate();  // For changing the URL
 
+    const [likeCount, setLikeCount] = useState(0);
     const [userReaction, setUserReaction] = useState(null);  // Track user reaction: true, false, or null
     const [viewedVideos, setViewedVideos] = useState(new Set()); // Track videos marked as viewed
 
+
+
+    const [isPlaying, setIsPlaying] = useState(false); // State to track if the video is playing
+
+
+
     const updateReaction = async (value) => {
         try {
-            const response = await axios.post('/api/like', { id: mpdUrl[currentVideoIndex], value });
-            setLikeCount(response.data.likes);  // Update like count from the response
-            setUserReaction(value);  // Update user reaction
+            //pass the correct id
+            const url = mpdUrl[currentVideoIndex]
+            const id = url.split('/').pop()
+  
+            const response = await axios.post('/api/like', { id, value });
+            console.log(response.data)
+            if (response.data.error){
+                console.log("error")
+            }else{
+                setLikeCount(response.data.likes);  // Update like count from the response
+                setUserReaction(value);  // Update user reaction
+            }
+            
         } catch (error) {
             console.error('Error updating reaction:', error);
         }
     };
 
     const handleLike = () => {
-        if (userReaction !== true) {
             updateReaction(true);
-        }
     };
 
     const handleDislike = () => {
-        if (userReaction !== false) {
             updateReaction(false);
-        }
     };
 
     // Function to initialize and load the video by index
-    const loadVideo = (index) => {
-        if (!mpdUrl[index]) return;  // Prevent loading if the index is out of bounds
-
+    const loadVideo = async (index) => {
+        if (!mpdUrl[index]) return;
+    
         const videoPlayerElement = videoElementRef.current;
-
-        // Initialize Dash.js player if not already initialized
-        if (!playerRef.current && videoPlayerElement) {
-            console.log("Initializing Dash.js player");
-            playerRef.current = dashjs.MediaPlayer().create();
-            playerRef.current.initialize(videoPlayerElement, mpdUrl[index], true);
-
-            // Initialize the control bar for the player
-            const controlbar = new ControlBar(playerRef.current);
-            controlbar.initialize();
-        } else if (playerRef.current) {
-            console.log("Attaching new video source");
-            playerRef.current.attachSource(mpdUrl[index]);
+        const videoUrl = mpdUrl[index];
+        const videoId = videoUrl.split('/').pop();
+    
+        if (!videoPlayerElement) {
+            console.error("Video element is not available.");
+            return;
         }
-
-        // Update the URL with the current video ID
-        const videoId = mpdUrl[index].split('/').pop();  // Extract video ID from URL
+    
+        if (!playerRef.current) {
+            console.log("Initializing Dash.js player");
+    
+            playerRef.current = dashjs.MediaPlayer().create();
+            playerRef.current.initialize(videoPlayerElement, null, true);
+    
+            // Attach event listeners
+            playerRef.current.on(dashjs.MediaPlayer.events.PLAYBACK_STARTED, () => {
+                console.log("Playback started");
+                setIsPlaying(true);
+                document.getElementById("iconPlayPause").classList.remove("icon-play");
+                document.getElementById("iconPlayPause").classList.add("icon-pause");
+            });
+    
+            playerRef.current.on(dashjs.MediaPlayer.events.PLAYBACK_PAUSED, () => {
+                console.log("Playback paused");
+                setIsPlaying(false);
+                document.getElementById("iconPlayPause").classList.remove("icon-pause");
+                document.getElementById("iconPlayPause").classList.add("icon-play");
+            });
+    
+            playerRef.current.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+                console.log("Stream initialized");
+                initializeControlBar();
+            });
+        }
+    
+        console.log("Attaching new video source");
+        playerRef.current.attachSource(videoUrl);
+    
         navigate(`/play/${videoId}`, { replace: true });
         markVideoAsViewed(videoId);
     };
+    
+    
+    // Function to initialize the control bar
+    const initializeControlBar = () => {
+        if (playerRef.current) {
+            const controlbar = new ControlBar(playerRef.current);
+            controlbar.initialize();
+            console.log("Control bar initialized");
+        }
+    };
+    
+    
+
     const markVideoAsViewed = async (videoId) => {
         if (viewedVideos.has(videoId)) {
             return; // Skip if video is already marked as viewed
@@ -118,22 +165,22 @@ function Player() {
     };
 
     // Scroll event handler to play previous or next video
-    const handleScroll = (e) => {
-        const scrollTop = window.scrollY === 0;
-        const scrollBottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight;
+    // const handleScroll = (e) => {
+    //     const scrollTop = window.scrollY === 0;
+    //     const scrollBottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight;
 
-        // Scroll Up: Play the previous video (do not fetch new ones)
-        if (scrollTop && currentVideoIndex > 0) {
-            setCurrentVideoIndex((prevIndex) => prevIndex - 1);  // Move to the previous video
-        }
+    //     // Scroll Up: Play the previous video (do not fetch new ones)
+    //     if (scrollTop && currentVideoIndex > 0) {
+    //         setCurrentVideoIndex((prevIndex) => prevIndex - 1);  // Move to the previous video
+    //     }
 
-        // Scroll Down: Fetch new video only if not already fetching
-        if (scrollBottom && !isFetching) {
-            fetchNewVideo().then(() => {
-                setCurrentVideoIndex((prevIndex) => prevIndex + 1);  // Move to the newly fetched video
-            });
-        }
-    };
+    //     // Scroll Down: Fetch new video only if not already fetching
+    //     if (scrollBottom && !isFetching) {
+    //         fetchNewVideo().then(() => {
+    //             setCurrentVideoIndex((prevIndex) => prevIndex + 1);  // Move to the newly fetched video
+    //         });
+    //     }
+    // };
 
     useEffect(() => {
         // Use wheel event instead of scroll for better UX (like YouTube Shorts)
@@ -158,33 +205,57 @@ function Player() {
 
     // Play/Pause toggle handler
     const togglePlayPause = () => {
-        if (playerRef.current) {
-            if (playerRef.current.isPaused()) {
-                playerRef.current.play();
-            } else {
+        if (playerRef.current && playerRef.current.isReady()) {
+            if (isPlaying) {
                 playerRef.current.pause();
+                console.log("Pausing video");
+            } else {
+                playerRef.current.play();
+                console.log("Playing video");
             }
+            setIsPlaying(!isPlaying); // Toggle the playing state
+        } else {
+            console.error("Player is not ready yet");
         }
     };
+
+    
+    
+    useEffect(() => {
+        if (mpdUrl[currentVideoIndex]) {
+            loadVideo(currentVideoIndex);
+        }
+    
+        return () => {
+            if (playerRef.current) {
+                console.log("Resetting Dash.js player");
+                playerRef.current.reset();
+                playerRef.current = null;
+            }
+        };
+    }, [currentVideoIndex, mpdUrl]);
+    
+    
 
     return (
         <div id="video-container">
             <div id="video-container-elements"> 
                 <video ref={videoElementRef} id="videoPlayer" width={640} height={360} controls></video>
                 <div id="videoController" className="video-controller unselectable">
-                    <div id="playPauseBtn" className="btn-play-pause" title="Play/Pause"
-                        onClick={togglePlayPause}>
-                        <span id="iconPlayPause" className="icon-play"></span>
-                    </div>
+                <div id="playPauseBtn" className="btn-play-pause" title="Play/Pause" onClick={togglePlayPause}>
+                    <span id="iconPlayPause" className={isPlaying ? "icon-pause" : "icon-play"}></span>
+                </div>
+
+
                     <span id="videoTime" className="time-display">00:00:00</span>
 
 
 
                     <button id="likeBtn" className="btn-like control-icon-layout" title="Like" onClick={handleLike}>
-                        <span className="icon-like"></span> {likeCount} Likes
+                        <span className="icon-like"></span> {likeCount} Like
                     </button>
                     <button id="thumbsDownBtn" className="btn-thumbs-down control-icon-layout" title="Dislike" onClick={handleDislike}>
-                        <span className="icon-thumbs-down"></span> {dislikeCount} Dislikes
+                        <span className="icon-thumbs-down"></span> Dislike
                     </button>
 
                     <div id="viewCount" className="view-count control-icon-layout" title="Views">

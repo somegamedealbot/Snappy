@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider} from "react-router-dom";
 import RootPage from './pages/Root.jsx'
 import SignUp from './pages/SignUp.jsx';
 import Player from './components/Player';
+import Upload from './pages/Upload.jsx';
 import axios from 'axios';
 
 const baseURL = "http://wbill.cse356.compas.cs.stonybrook.edu";
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       }
     },
     element: <Player></Player>
+  }, 
+  {
+    path: "/upload",
+    element: <Upload></Upload>
   }
 ])
 
