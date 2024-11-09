@@ -9,7 +9,6 @@ const path = require('path');
 
 const metadata = JSON.parse(fs.readFileSync(process.env.METADATA_LOCATION));
 
-
 async function unauthApiRoutes(fastify, options){
     fastify.post('/login', async (request, reply) => {
         const {username, password} = request.body;
@@ -185,6 +184,7 @@ async function authApiRoutes(fastify, options){
     
     fastify.post('/check-auth', (request, reply) =>{
         return reply.code(200).send({
+            status: 'OK',
             isLoggedIn: true,
             userId: request.session.userId // add user id implementation here
         });
@@ -212,8 +212,8 @@ async function authApiRoutes(fastify, options){
         }
 
         return reply.send({
-            videos: vidsInfo,
-            status: 'OK'
+            status: 'OK',
+            videos: vidsInfo
         });
     });
 
@@ -239,39 +239,79 @@ async function authApiRoutes(fastify, options){
         const like_value = request.body.value;
         const user_id = request.session.userId;
 
+        let updatedLikeCount = 0; 
+
+        request.log.info({
+            likeInfo: {
+                video_id,
+                like_value,
+                user_id
+            }
+        });
         // Update / create like
-        
         let like = await Like.findOne({
             where: {
                 user_id,
                 video_id
             }
         });
+        
+        // const parsedLikeValue = like.like_value === true ? "true" : "false";
+        const parsedLikeValue = like_value;
+        const video = await Video.findByPk(video_id);
 
         // like exists
-        if (like) { 
-            like.like_value = like_value;
-            await like.save();
+        if (like) {
+            // same as previous like value
+            if (like_value === null) {
+                // delete the like
+                if (like.like_value === true){
+                    video.likes -= 1;
+                    await video.save();
+                }
+                updatedLikeCount = video.likes;
+                await like.destroy();
+
+            }
+            else if (parsedLikeValue === like.like_value){
+                return reply.code(200).send({
+                    status: 'ERROR',
+                    error: true, 
+                    message: 'User already liked/disliked' 
+                });
+            }
+            else {
+                if (like_value !== null){
+                    like.like_value = parsedLikeValue;
+                    await like.save();
+
+                    const changeInLikes = parsedLikeValue === true ? 1 : -1;
+                    video.likes += changeInLikes;
+                    await video.save();
+                    updatedLikeCount = video.likes;
+                }
+            }
         }
         // like doesn't exist yet
         else {
             await Like.create({
-                like_value,
+                like_value: parsedLikeValue,
                 user_id, 
                 video_id
             });
-        }
 
-        // querie for the amount of likes
-        const likes = (await Like.findAndCountAll({
-            where: {
-                video_id
+            if (parsedLikeValue === true) {
+                video.likes += 1;
+                await video.save();
             }
-        })).count;
+
+            updatedLikeCount = video.likes;
+        }
         
         // return # of likes
         return reply.code(200).send({
-            likes
+            status: 'OK',
+            likes: updatedLikeCount
         });
 
     })
@@ -288,6 +328,13 @@ async function authApiRoutes(fastify, options){
     fastify.post('/view', async (request, reply) => {
         const video_id = request.body.id;
         const user_id = request.session.userId;
+
+        request.log.info({
+            viewInfo: {
+                video_id,
+                user_id
+            }
+        });
         
         let view = await View.findOne({
             where: {
@@ -306,6 +353,7 @@ async function authApiRoutes(fastify, options){
         }
 
         return reply.code(200).send({
+            status: 'OK',
             viewed
         });
 
@@ -336,6 +384,7 @@ async function authApiRoutes(fastify, options){
         }
 
         return reply.send({
+            status: 'OK',
             videos: videosRes
         });
 

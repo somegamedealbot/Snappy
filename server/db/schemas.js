@@ -35,6 +35,10 @@ const Video = sequelize.define('Videos',
       type: DataTypes.STRING,
       allowNull: false
     },
+    likes: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     // author_id: {
     //   type: DataTypes.STRING,
     //   allowNull: false,
