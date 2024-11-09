@@ -58,7 +58,6 @@ if (!fs.existsSync('../video-info.json')) {
 
         await taskQueue.add({
             title,
-            description,
             mp4_location: `/root/videos/${filename}`,
             id,
         }, {

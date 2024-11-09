@@ -25,6 +25,7 @@ const loadData = async () => {if (fs.existsSync('../video-info.json')) {
             id,
             title,
             description,
+            uploaded: true,
             author: 'admin', // for now
             author_id: admin.userId
         });

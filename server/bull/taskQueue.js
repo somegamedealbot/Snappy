@@ -23,12 +23,8 @@ taskQueue.clean(0, 'wait');
 taskQueue.clean(0, 'delayed');
 taskQueue.clean(0, 'active');
 
-// create mpd directory if not created
-if (!fs.existsSync('/root/cse-356-warmup-project-2/mpds/')) {
-    fs.mkdirSync('/root/cse-356-warmup-project-2/mpds/');
-}
-
 if (!fs.existsSync(process.env.SEGMENTS_LOCATION)) {
+    console.log(process.env.SEGMENTS_LOCATION);
     fs.mkdirSync(process.env.SEGMENTS_LOCATION);
 }
 
@@ -37,7 +33,7 @@ if (!fs.existsSync(process.env.THUMBNAILS_LOCATION)) {
 }
 
 taskQueue.process(5, async (job, done) => {
-    const {title, description, mp4_location, id} = job.data;
+    const {title, mp4_location, id} = job.data;
     // const mpdLocation = `${process.env.MPD_LOCATION}/${id}.mpd`
     // const segmentLocation = `${process.env.SEGMENTS_LOCATION}/${id}/segments`
     const thumbnailLocation = `${process.env.THUMBNAILS_LOCATION}/${id}/${id}.jpg`
