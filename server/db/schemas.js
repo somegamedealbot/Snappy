@@ -15,46 +15,6 @@ const Like = sequelize.define('UserVideoLike', {
 const View = sequelize.define('UserVideoView', {
 });
 
-const Video = sequelize.define('Videos', 
-  {
-    id: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
-      primaryKey: true
-    },
-    uploaded: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    author: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    likes: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
-    },
-    // author_id: {
-    //   type: DataTypes.STRING,
-    //   allowNull: false,
-    //   unique: true
-    // },
-    views: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: false
-    }
-  }
-)
-
 const User = sequelize.define('Users', 
   {
     username: {
@@ -96,6 +56,51 @@ const User = sequelize.define('Users',
     ]
   }
 );
+
+const Video = sequelize.define('Videos', 
+  {
+    id: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      primaryKey: true
+    },
+    uploaded: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    author: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    likes: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    author_id: {
+      type: DataTypes.STRING,
+      references: {
+        model: User,  // or 'Users' if not imported
+        key: 'userId'
+      },
+      allowNull: false,  // Ensures it cannot be null
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    },
+    views: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
+  }
+)
 
 
 

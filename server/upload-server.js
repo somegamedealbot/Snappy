@@ -38,23 +38,29 @@ app.post('/', async (request, reply) => {
     const uploadedFileName = request.body.uploadedFileName?.value;
 
     // request.log.info({body: request.body});
-    request.log.info({body: {
-        author: request.body.author.value,
-        filename: uploadedFileName
-    }});
-
+    
     const user = await User.findOne({
         where: {
             username: author
         },
     });
+    
+    request.log.info({body: {
+        author,
+        filename: uploadedFileName,
+        author_id: user.userId
+    }});
 
-    await Video.create({
+    const video = await Video.create({
         id: id,
         title,
-        author,
         description: "",
-        author_id: user.id  // find by querying username
+        author,
+        author_id: user.userId  // find by querying username
+    });
+
+    request.log.info({
+        video
     });
 
     // send it for processing here

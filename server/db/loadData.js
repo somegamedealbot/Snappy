@@ -14,13 +14,7 @@ const loadData = async () => {if (fs.existsSync('../video-info.json')) {
     
     for (const id of videoKeys){
         const { title, description, author} = videoInfo[id]; 
-        // const newVideo = Video.build({
-        //     id,
-        //     title,
-        //     description,
-        //     author: 'admin', // for now
-        //     author_id: admin.userId
-        // });
+
         videos.push({
             id,
             title,
