@@ -60,6 +60,10 @@ app.post('/', async (request, reply) => {
     });
 
     request.log.info({
+        message: `Video with ${id} has been added to db`
+    });
+
+    request.log.info({
         video
     });
 

@@ -4,10 +4,6 @@ const crypto = require('crypto');
 const { User, Video, Like, View, sequelize } = require("./db/schemas");
 const {sendMail} = require("./sendmail");
 const {v7: uuidv7} = require('uuid');
-const fs = require('fs');
-const path = require('path');
-
-const metadata = JSON.parse(fs.readFileSync(process.env.METADATA_LOCATION));
 
 async function unauthApiRoutes(fastify, options){
     fastify.post('/login', async (request, reply) => {
@@ -158,28 +154,44 @@ async function authApiRoutes(fastify, options){
         }
     });
 
-    fastify.get('/example', async (request, reply) => {
-        return { message: 'This is an example route' };
+    fastify.addHook('preHandler', async (request, reply) => {
+        try {
+            if (request.session) {
+                request.log.info({
+                    session: request.session, 
+                    test: 'test_msg'
+                });
+                await request.sessionStore.touch(request.session.id);
+            }
+        } catch (err) {
+            request.log.error("Session store error", err);
+            return reply.code(500).send({
+                status: 'ERROR',
+                error: true,
+                message: 'Session error. Please try again.'
+            });
+        }
     });
     
-    fastify.post('/logout', (request, reply) => {
-        // checks if user's session is logged in
-        request.session.destroy(err => {
-        if (err) {
-            return reply.code(200).send({
-            status: 'ERROR',
-            error: true, 
-            message: 'Logout failed' 
-        });
-        } 
-        else {
-            reply.clearCookie('connect.sid');
-            return reply.code(200).send({ 
+    fastify.post('/logout', async (request, reply) => {
+        try {
+            await new Promise((resolve, reject) => {
+                request.session.destroy(err => {
+                    if (err) return reject(err);
+                    resolve();
+                });
+            });
+            return reply.code(200).clearCookie('connect.sid').send({ 
                 status: 'OK',
                 message: 'Logout successful' 
             });
+        } catch (err) {
+            return reply.code(200).send({
+                status: 'ERROR',
+                error: true, 
+                message: 'Logout failed' 
+            });
         }
-        });
     });
     
     fastify.post('/check-auth', (request, reply) =>{
@@ -203,21 +215,20 @@ async function authApiRoutes(fastify, options){
                     group: 'id',
                     limit: count,
                 });
-    
-                for (const vid of videos) {
-                    vidsInfo.push({
-                        id: vid.id,
-                        metadata: {
-                            title: vid.title,
-                            description: vid.description
-                        }
-                    });
-                }
+                
+                const vidsInfo = videos.map(vid => ({
+                    id: vid.id,
+                    metadata: {
+                      title: vid.title,
+                      description: vid.description
+                    }
+                }));
     
                 return reply.send({
                     status: 'OK',
                     videos: vidsInfo
                 });
+                
             }
 
             catch(error) {
@@ -235,6 +246,72 @@ async function authApiRoutes(fastify, options){
             }
         }
     });
+
+    fastify.post('/videos-test', async(request, reply) => {
+        const maxRetries = 3;
+        let attempt = 0;
+        const count = parseInt(request.body.count);
+        const vidsInfo = []
+        while (attempt < maxRetries) {
+            try {
+                // temporary randomly select videos
+                const videos = await Video.findAll({
+                    // order: sequelize.random(),
+                    group: sequelize.col('Videos.id'),
+                    // limit: count,
+                    include: [
+                        {
+                            model: View,
+                            required: false,
+                            where: {
+                                user_id: request.session.userId,
+                                // video_id: '$Videos.id$'
+                            }
+                        },
+                        {
+                            model: Like,
+                            required: true,
+                            where: {
+                                user_id: request.session.userId,
+                                // video_id: '$Videos.id$'
+                            },
+                            attributes: ['like_value', 'user_id']
+                        }
+                    ]
+                });
+    
+                for (const vid of videos) {
+                    // vidsInfo.push 
+                    // vidsInfo.push({
+                    //     id: vid.id,
+                    //     title: vid.title,
+                    //     description: vid.description,
+                    //     watched: vid.UserVideoViews[0] ? true : false,
+                    //     liked: vid.UserVideoLikes[0] ? vid.UserVideoLikes[0].like_value: null
+                    // });
+                }
+    
+                return reply.send({
+                    status: 'OK',
+                    videos: videos
+                });
+            }
+
+            catch(error) {
+                attempt += 1;
+                request.log.warn(`Attempt ${attempt} failed: ${error.message}`);
+    
+                // If all retries fail, log the error and send a 500 response
+                if (attempt === maxRetries) {
+                    request.log.error('Max retry attempts reached.');
+                    return reply.code(500).send({
+                        status: 'ERROR',
+                        message: 'Failed to retrieve videos after multiple attempts',
+                    });
+                }
+            }
+        }
+    })
 
     fastify.get('/manifest/:id', (request, reply) => {
         const id = request.params.id;
