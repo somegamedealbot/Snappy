@@ -32,8 +32,7 @@ const Upload = () => {
             // POST request to upload the video
             const response = await axios.post('/api/upload', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'X-CSE356': '<YOUR_COURSE_ID>' // Replace with your actual course ID
+                    'Content-Type': 'multipart/form-data'
                 }
             });
 

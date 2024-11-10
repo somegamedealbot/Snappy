@@ -1051,7 +1051,7 @@ var ControlBar = function (dashjsMediaPlayer, displayUTCTimeCodes) {
                 trackSwitchBtn.classList.add('hide');
             }
             addPlayerEventsListeners();
-            playPauseBtn.addEventListener('click', _onPlayPauseClick);
+            // playPauseBtn.addEventListener('click', _onPlayPauseClick);
             muteBtn.addEventListener('click', onMuteClick);
             fullscreenBtn.addEventListener('click', onFullscreenClick);
             seekbar.addEventListener('mousedown', onSeeking, true);

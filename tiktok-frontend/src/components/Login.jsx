@@ -39,6 +39,7 @@ function LoginPage({setAuth}) {
                 <br />
                 <input
                     type="text"
+                    name='username'
                     id="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -51,6 +52,7 @@ function LoginPage({setAuth}) {
                 <input
                     type="password"
                     id="password"
+                    name='password'
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required

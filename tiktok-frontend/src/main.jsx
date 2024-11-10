@@ -42,7 +42,7 @@ const router = createBrowserRouter([
   {
     path: "/play/:id",
     loader: async ({params}) => {
-      const count = 4;
+      const count = 5;
       try{
         const response = await axios.post(`${baseURL}/api/videos`, { count });
         const videoObjects = response.data.videos;
