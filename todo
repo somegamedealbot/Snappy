@@ -1,0 +1,3 @@
+- Preload videos using video blocks
+- Do collaborative filtering (Redis in-memory store for now to store all the users' vectors)
+    Do calculations / similarity comparisons live

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import Video from './Video.jsx';
@@ -9,8 +9,6 @@ function Player() {
     const initialUrls = useLoaderData(); // Initial array of video URLs
     const [mpdUrls, setMpdUrls] = useState(initialUrls);
     const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-    const [viewedVideos, setViewedVideos] = useState(new Set()); // Track videos marked as viewed
-
     // Function to update the browser URL to match the current video URL
     const updateBrowserUrl = (index) => {
         const currentVideoUrl = mpdUrls[index];
@@ -20,14 +18,10 @@ function Player() {
     };
 
     const markVideoAsViewed = async (videoId) => {
-        if (viewedVideos.has(videoId)) {
-            return; // Skip if video is already marked as viewed
-        }
-
         try {
             const response = await axios.post('/api/view', { id: videoId });
             if (response.data.viewed === false) {
-                setViewedVideos((prev) => new Set(prev).add(videoId)); // Add to viewed set if new
+                // setViewedVideos((prev) => new Set(prev).add(videoId)); // Add to viewed set if new
                 console.log(`Video ${videoId} marked as viewed`);
             }
             
@@ -51,12 +45,18 @@ function Player() {
         }
     };
 
+    const isCooldownRef = useRef(false);
+    const cooldownTime = 50
+
     // Function to handle mouse wheel scroll for changing videos
     const handleWheelScroll = async (event) => {
+
+        if (isCooldownRef.current) return; // If still in cooldown, exit early
+
         if (event.deltaY > 0) {
             // Scroll down, show next video
             await fetchNewVideo(); // Fetch a new video URL every time you scroll down
-            console.log(mpdUrls)
+            // console.log(mpdUrls)
             const url = mpdUrls[currentVideoIndex];
             const id = url.split('/').pop()
             await markVideoAsViewed(id)
@@ -64,8 +64,18 @@ function Player() {
             
         } else {
             // Scroll up, show previous video
-            setCurrentVideoIndex((prevIndex) => (prevIndex - 1 + mpdUrls.length) % mpdUrls.length);
+            if(currentVideoIndex > 0){
+                setCurrentVideoIndex((prevIndex) => (prevIndex - 1 + mpdUrls.length) % mpdUrls.length);
+            }
         }
+
+        // console.log('enter cooldown');
+        isCooldownRef.current = true; // Start cooldown
+
+        setTimeout(() => {
+            // console.log('reset');
+            isCooldownRef.current = false; // End cooldown after specified time
+        }, cooldownTime);
     };
 
     // Update the browser URL whenever the current video changes
@@ -86,7 +96,7 @@ function Player() {
             {/* Render only the currently selected video */}
             {mpdUrls.map((url, index) => (
                 <div key={url} style={{ display: currentVideoIndex === index ? 'block' : 'none' }}>
-                    <Video videoURL={url} index={index} />
+                    <Video videoURL={url} index={index} button= {currentVideoIndex === index}/>
                 </div>
             ))}
 

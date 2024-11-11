@@ -1,0 +1,33 @@
+{"level":30,"time":1731179825145,"pid":78678,"hostname":"milestone-2","reqId":"req-z","res":{"statusCode":200},"responseTime":136.30449000000954,"msg":"request completed"}
+{"level":30,"time":1731179825146,"pid":78678,"hostname":"milestone-2","reqId":"req-w","res":{"statusCode":200},"responseTime":139.2817499935627,"msg":"request completed"}
+{"level":30,"time":1731179825154,"pid":78678,"hostname":"milestone-2","reqId":"req-12","req":{"method":"POST","url":"/api/check-auth","host":"backend","remoteAddress":"127.0.0.1","remotePort":47088},"msg":"incoming request"}
+{"level":30,"time":1731179825155,"pid":78678,"hostname":"milestone-2","reqId":"req-13","req":{"method":"GET","url":"/api/thumbnail/019303d6-7de3-7ccd-bd42-45fd3d22b249","host":"backend","remoteAddress":"127.0.0.1","remotePort":47096},"msg":"incoming request"}
+{"level":30,"time":1731179825156,"pid":78678,"hostname":"milestone-2","reqId":"req-14","req":{"method":"GET","url":"/api/thumbnail/019303d6-7de4-7ccd-bd44-8cef6a00b595","host":"backend","remoteAddress":"127.0.0.1","remotePort":47102},"msg":"incoming request"}
+{"level":30,"time":1731179825196,"pid":78678,"hostname":"milestone-2","reqId":"req-11","res":{"statusCode":200},"responseTime":136.05710500478745,"msg":"request completed"}
+{"level":30,"time":1731179825198,"pid":78678,"hostname":"milestone-2","reqId":"req-10","res":{"statusCode":200},"responseTime":143.73382100462914,"msg":"request completed"}
+{"level":30,"time":1731179825244,"pid":78678,"hostname":"milestone-2","reqId":"req-12","res":{"statusCode":200},"responseTime":89.40234699845314,"msg":"request completed"}
+{"level":30,"time":1731179825269,"pid":78678,"hostname":"milestone-2","reqId":"req-14","res":{"statusCode":200},"responseTime":112.80519998073578,"msg":"request completed"}
+{"level":30,"time":1731179825270,"pid":78678,"hostname":"milestone-2","reqId":"req-13","res":{"statusCode":200},"responseTime":114.23668399453163,"msg":"request completed"}
+{"level":30,"time":1731179825632,"pid":78678,"hostname":"milestone-2","reqId":"req-15","req":{"method":"POST","url":"/api/login","host":"backend","remoteAddress":"127.0.0.1","remotePort":47112},"msg":"incoming request"}
+Executing (default): SELECT `username`, `email`, `password`, `key`, `userId`, `createdAt`, `updatedAt` FROM `Users` AS `Users` WHERE `Users`.`username` = 'grader+FdjsgvwVXq';
+{"level":30,"time":1731179825844,"pid":78678,"hostname":"milestone-2","reqId":"req-15","res":{"statusCode":200},"responseTime":212.73053401708603,"msg":"request completed"}
+{"level":30,"time":1731179826058,"pid":78678,"hostname":"milestone-2","reqId":"req-16","req":{"method":"POST","url":"/api/videos","host":"backend","remoteAddress":"127.0.0.1","remotePort":47116},"msg":"incoming request"}
+Executing (default): SELECT `id`, `uploaded`, `title`, `author`, `likes`, `author_id`, `views`, `description`, `createdAt`, `updatedAt` FROM `Videos` AS `Videos` GROUP BY `id` ORDER BY RANDOM() LIMIT 10;
+{"level":40,"time":1731179826117,"pid":78678,"hostname":"milestone-2","reqId":"req-16","msg":"Reply was already sent, did you forget to \"return reply\" in the \"/api/videos\" (POST) route?"}
+node:_http_server:344
+    throw new ERR_HTTP_HEADERS_SENT('write');
+          ^
+
+Error [ERR_HTTP_HEADERS_SENT]: Cannot write headers after they are sent to the client
+    at ServerResponse.writeHead (node:_http_server:344:11)
+    at safeWriteHead (/root/cse-356-warmup-project-2/node_modules/fastify/lib/reply.js:543:9)
+    at onSendEnd (/root/cse-356-warmup-project-2/node_modules/fastify/lib/reply.js:608:5)
+    at wrapOnSendEnd (/root/cse-356-warmup-project-2/node_modules/fastify/lib/reply.js:536:5)
+    at next (/root/cse-356-warmup-project-2/node_modules/fastify/lib/hooks.js:289:7)
+    at /root/cse-356-warmup-project-2/node_modules/@fastify/session/lib/fastifySession.js:202:9
+    at Statement.<anonymous> (/root/cse-356-warmup-project-2/node_modules/@fastify/session/lib/session.js:187:11)
+    at Statement.<anonymous> (/root/cse-356-warmup-project-2/node_modules/connect-sqlite3/lib/connect-sqlite3.js:131:32) {
+  code: 'ERR_HTTP_HEADERS_SENT'
+}
+
+Node.js v22.11.0
