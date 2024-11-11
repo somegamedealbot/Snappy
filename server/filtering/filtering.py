@@ -2,17 +2,15 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, session
 from schemas import User, Video, Like
 import numpy as np
-import math
-import sys
 
-engine = create_engine('sqlite:///../../main.db')
+engine = create_engine('sqlite:////root/cse-356-warmup-project-2/main.db')
 
 session = sessionmaker(bind=engine)()
 
 def get_latest_data():
     # table_names_from_session = session.get_bind().metadata.tables.keys()
     inspector = inspect(engine)
-    print(inspector.get_table_names())
+    # print(inspector.get_table_names())
     users = session.query(User).all()
     videos = session.query(Video).all()
     likes = session.query(Like).all()
@@ -35,31 +33,21 @@ def compute_similarity(matrix, user_vector):
     
     # normalize vectors in matrix: self divide by norm
     norm_user_vector = np.linalg.norm(user_vector, keepdims=True)
-    # print(np.shape(norm_user_vector))
-    # for 
+
+    # (users, 1)
     norm_matrix = (np.linalg.norm(matrix, axis=1, keepdims=True))
-    # print(np.shape(norm_matrix))
-    print(np.shape(matrix))
-    print(np.shape(user_vector))
-    # print(norm_matrix)
+
     # (1, users)
-    similarity = np.zeros(np.shape(norm_matrix)[1])
+    similarity = np.zeros(np.shape(norm_matrix)[0])
 
     for i, norm_row in enumerate(norm_matrix):
         if norm_user_vector * norm_row != 0:
-            # print(np.shape(matrix.T[i]), np.shape(user_vector), np.shape(norm_row), np.shape(norm_user_vector))
-            print(user_vector.shape)
-            print(matrix[i].shape)
+
             similarity[i] += user_vector.dot(matrix[i]) # ????
             similarity[i] /= (norm_user_vector * norm_row)
 
-    # np.set_printoptions(threshold=sys.maxsize)
-    # print(matrix)
-    # print(norm_user_vector)
-    
     # compute similarity
 
-    # similarity = np.sum(similarity.sum(), axis=0)
     print(similarity)
     print(np.shape(similarity))
 
@@ -78,17 +66,20 @@ def recommend_videos(user_id, num_vids):
     # sim_users = sim_matrix[user_map_id]
 
     # removes self to not compare with self
-    # sim_to_others[user_map_id] = 0 
+    sim_to_others[user_map_id] = 0 
     # # print(sim_to_others)
     # print(np.shape(sim_to_others), np.shape(matrix))
 
     # # similarity scores
-    # weighted_scores = sim_to_others @ matrix
+    weighted_scores = sim_to_others @ matrix
     # # np.set_printoptions(threshold=sys.maxsize)
     # # print(weighted_scores)
-    # user_interactions = matrix[user_map_id]
+    user_interactions = matrix[user_map_id]
     # # videos that were not liked/disliked
-    # unviewed_video_ids = np.where(user_interactions == 0)[0]
+    # edit this to get actual videos where the user has not viewed
+    # viewed_videos = 
+    # unviewed_video_ids = np.where(it is not in the set of viewed videos)[0]
+    unviewed_video_ids = np.where(user_interactions == 0)[0]
 
     # # make sure that the view the recommendations have not been viewed yet
     # # prefer:
@@ -98,9 +89,9 @@ def recommend_videos(user_id, num_vids):
 
     # # print(len(unviewed_video_ids))
     # # print(weighted_scores[unviewed_video_ids])
-    # recommended_idxs = unviewed_video_ids[np.argsort(-weighted_scores[unviewed_video_ids])]
+    recommended_idxs = unviewed_video_ids[np.argsort(-weighted_scores[unviewed_video_ids])]
     # # print(recommended_idxs)
-    # video_ids_reverse = {v: k for k, v in video_ids.items()}
-    # return [video_ids_reverse[idx] for idx in recommended_idxs[:num_vids]]
+    video_ids_reverse = {v: k for k, v in video_ids.items()}
+    return [video_ids_reverse[idx] for idx in recommended_idxs[:num_vids]]
 
-print(recommend_videos('019317fc-f35a-7aad-bf97-d2dfbcb272fd', num_vids=5))
+print(recommend_videos('01931ce1-44ce-7aa8-ba5b-38cbae330fcc', num_vids=5))
