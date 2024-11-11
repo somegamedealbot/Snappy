@@ -3,7 +3,7 @@ import axios from 'axios';
 import dashjs from 'dashjs';
 import ControlBar from '../scripts/ControlBar';
 
-export default function Video({ videoURL, index, button}) {
+export default function Video({ videoURL, index, currentVideoIndex, button}) {
     const [mpdData, setMpdData] = useState(null);
     const [likeCount, setLikeCount] = useState(0);
     const [userReaction, setUserReaction] = useState(null);  // Track user reaction: true, false, or null
@@ -23,6 +23,17 @@ export default function Video({ videoURL, index, button}) {
         }
     };
     
+    useEffect(() => {
+        console.log(`Current video index: ${currentVideoIndex}, This video index: ${index}`);
+        if (videoElementRef.current) {
+            if (index !== currentVideoIndex) {
+                console.log(`Pausing video ${index}`);
+                videoElementRef.current.pause();
+                setIsPlaying(false);
+            }
+        }
+    }, [currentVideoIndex]);
+
     // Initialize Dash.js player using raw MPD data
     const initializePlayer = () => {
         // console.log(videoURL);
@@ -34,8 +45,8 @@ export default function Video({ videoURL, index, button}) {
             playerRef.current.updateSettings({
                 streaming: {
                     buffer: {
-                      bufferToKeep: 2,  // Keep 30 seconds of video in the buffer before playback starts
-                      initialBufferLevel: 1,
+                      bufferToKeep: 60,  // Keep 30 seconds of video in the buffer before playback starts
+                      initialBufferLevel: 60,
                       fastSwitchEnabled: false
                       //   bufferTime: 3,
                     //   bufferTimeAtTopQualityLongForm: 3,  // Keep 15 seconds of high-quality video in the buffer
@@ -54,11 +65,13 @@ export default function Video({ videoURL, index, button}) {
             playerRef.current.initialize(videoElementRef.current, videoURL, false);
             playerRef.current.on(dashjs.MediaPlayer.events.MANIFEST_LOADED, () => {
                 console.log(`Manifest for ${index} has loaded`);
+                axios.post('/api/log', {
+                    manifest: `Manifest for ${index} has loaded!`
+                });
             })
             playerRef.current.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function () {
                 // Retrieve available video quality levels
-                const bitrates = playerRef.current.getBitrateInfoListFor("video");
-                
+                const bitrates = playerRef.current.getBitrateInfoListFor("video");    
                 // Check if we have at least one quality level
                 if (bitrates.length > 0) {
                   // Set the quality to the lowest level (index 0)
@@ -67,6 +80,11 @@ export default function Video({ videoURL, index, button}) {
             });
             playerRef.current.on(dashjs.MediaPlayer.events.ERROR, (e) => {
                 console.log(`Error on player ${index}`, e);
+                axios.post('/api/log', {
+                    error: `Manifest for ${index} has an error!
+                    ${e}
+                    `
+                });
             })
             let controlbar = new ControlBar(playerRef.current);
             // console.log('index', index);
@@ -102,9 +120,15 @@ export default function Video({ videoURL, index, button}) {
         if (videoElementRef.current) {
             if (videoElementRef.current.paused) {
                 videoElementRef.current.play();
+                axios.post('/api/log', {
+                    play: `Playing video ${index}.`
+                });
                 setIsPlaying(true);
             } else {
                 videoElementRef.current.pause();
+                axios.post('/api/log', {
+                    pause: `Pausing video ${index}.`
+                });
                 setIsPlaying(false);
             }
         }

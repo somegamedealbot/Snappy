@@ -455,6 +455,13 @@ async function authApiRoutes(fastify, options){
 
     });
 
+    fastify.post('/log', async(request, reply) => {
+        request.log.info({
+            'LOGGING:': request.body
+        });
+        return reply.send({})
+    })
+
     fastify.get('/processing-status', async (request, reply) => {
         const user_id = request.session.userId;
         

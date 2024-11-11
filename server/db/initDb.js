@@ -23,7 +23,7 @@ const init = async () => {
       Like.belongsTo(User, {foreignKey: 'user_id'});
       Like.belongsTo(Video, {foreignKey: 'video_id'});
 
-      const force = false;
+      const force = true;
 
       await sequelize.sync({
         // force: true,

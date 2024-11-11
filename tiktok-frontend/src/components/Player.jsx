@@ -52,8 +52,10 @@ function Player() {
     const handleWheelScroll = async (event) => {
 
         if (isCooldownRef.current) return; // If still in cooldown, exit early
-
         if (event.deltaY > 0) {
+            axios.post('/api/log', {
+                scrolling: `Current index ${currentVideoIndex}, Scrolling down`
+            });
             // Scroll down, show next video
             await fetchNewVideo(); // Fetch a new video URL every time you scroll down
             // console.log(mpdUrls)
@@ -64,6 +66,9 @@ function Player() {
             
         } else {
             // Scroll up, show previous video
+            axios.post('/api/log', {
+                scrolling: `Current index ${currentVideoIndex}, Scrolling up`
+            });
             if(currentVideoIndex > 0){
                 setCurrentVideoIndex((prevIndex) => (prevIndex - 1 + mpdUrls.length) % mpdUrls.length);
             }
@@ -96,7 +101,7 @@ function Player() {
             {/* Render only the currently selected video */}
             {mpdUrls.map((url, index) => (
                 <div key={url} style={{ display: currentVideoIndex === index ? 'block' : 'none' }}>
-                    <Video videoURL={url} index={index} button= {currentVideoIndex === index}/>
+                    <Video videoURL={url} index={index} currentVideoIndex={currentVideoIndex} button= {currentVideoIndex === index}/>
                 </div>
             ))}
 
