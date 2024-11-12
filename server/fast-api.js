@@ -1,9 +1,13 @@
 const fastify = require('fastify');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { Op } = require('sequelize');
 const { User, Video, Like, View, sequelize } = require("./db/schemas");
 const {sendMail} = require("./sendmail");
 const {v7: uuidv7} = require('uuid');
+
+const proxy = require('@fastify/http-proxy');
+const { default: axios } = require('axios');
 
 async function unauthApiRoutes(fastify, options){
     fastify.post('/login', async (request, reply) => {
@@ -248,71 +252,67 @@ async function authApiRoutes(fastify, options){
     });
 
     fastify.post('/videos-test', async(request, reply) => {
-        const maxRetries = 3;
-        let attempt = 0;
-        const count = parseInt(request.body.count);
-        const vidsInfo = []
-        while (attempt < maxRetries) {
-            try {
-                // temporary randomly select videos
-                const videos = await Video.findAll({
-                    // order: sequelize.random(),
-                    group: sequelize.col('Videos.id'),
-                    // limit: count,
-                    include: [
-                        {
-                            model: View,
-                            required: false,
-                            where: {
-                                user_id: request.session.userId,
-                                // video_id: '$Videos.id$'
-                            }
-                        },
-                        {
-                            model: Like,
-                            required: true,
-                            where: {
-                                user_id: request.session.userId,
-                                // video_id: '$Videos.id$'
-                            },
-                            attributes: ['like_value', 'user_id']
-                        }
-                    ]
-                });
-    
-                for (const vid of videos) {
-                    // vidsInfo.push 
-                    // vidsInfo.push({
-                    //     id: vid.id,
-                    //     title: vid.title,
-                    //     description: vid.description,
-                    //     watched: vid.UserVideoViews[0] ? true : false,
-                    //     liked: vid.UserVideoLikes[0] ? vid.UserVideoLikes[0].like_value: null
-                    // });
-                }
-    
-                return reply.send({
-                    status: 'OK',
-                    videos: videos
-                });
-            }
+        const count = request.body.count;
+        const id = request.session.userId;
 
-            catch(error) {
-                attempt += 1;
-                request.log.warn(`Attempt ${attempt} failed: ${error.message}`);
-    
-                // If all retries fail, log the error and send a 500 response
-                if (attempt === maxRetries) {
-                    request.log.error('Max retry attempts reached.');
-                    return reply.code(500).send({
-                        status: 'ERROR',
-                        message: 'Failed to retrieve videos after multiple attempts',
-                    });
+        // call recommendation server
+        const res = await axios.post(`http://${process.env.RECOMMEND_SERVER}`, {
+            count, id
+        },
+        {headers: { 'content-type': 'application/x-www-form-urlencoded' }});
+
+        const videoIds = res.data;
+        request.log.info({
+            videoIds
+        });
+
+        const videos = await Video.findAll({
+            // order: sequelize.random(),
+            group: sequelize.col('Videos.id'),
+            where:{
+                id: {
+                    [Op.in]: videoIds
                 }
+            },
+            // limit: count,
+            include: [
+                {
+                    model: View,
+                    required: false,
+                    where: {
+                        user_id: request.session.userId,
+                        // video_id: '$Videos.id$'
+                    }
+                },
+                {
+                    model: Like,
+                    required: false,
+                    where: {
+                        user_id: request.session.userId,
+                        // video_id: '$Videos.id$'
+                    },
+                    attributes: ['like_value', 'user_id']
+                }
+            ]
+        });
+        
+        const vidsInfo = videos.map((vid) => {
+            return {
+                id: vid.id,
+                title: vid.title,
+                description: vid.description,
+                watched: vid.UserVideoViews[0] ? true : false,
+                liked: vid.UserVideoLikes[0] ? vid.UserVideoLikes[0].like_value: null
             }
-        }
+        })
+
+        return reply.send({
+            status: 'OK',
+            videos: vidsInfo
+        });
+
     })
-
+        
     fastify.get('/manifest/:id', (request, reply) => {
         const id = request.params.id;
         const filename = id + '.mpd';
@@ -416,7 +416,7 @@ async function authApiRoutes(fastify, options){
     // fastify.post('/upload', (request, reply) => {
 
     // })
-    fastify.register(require('@fastify/http-proxy'), {
+    fastify.register(proxy, {
         upstream: `http://${process.env.UPLOAD_SERVER}`,
         prefix: '/upload',
     });
