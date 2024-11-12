@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, Integer, Boolean, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -35,3 +35,9 @@ class Like(Base):
 
     # user = relationship('User', back_populates='userId')
     # video = relationship('Video', back_populates='id')
+
+class View(Base): 
+    __tablename__ = 'UserVideoViews'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(String, ForeignKey('users.userId'))
+    video_id = Column(String, ForeignKey('videos.id'))

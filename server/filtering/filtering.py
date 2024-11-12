@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, session
 from schemas import User, Video, Like
 import numpy as np
+import time
 
 engine = create_engine('sqlite:////root/cse-356-warmup-project-2/main.db')
 
@@ -14,6 +15,7 @@ def get_latest_data():
     users = session.query(User).all()
     videos = session.query(Video).all()
     likes = session.query(Like).all()
+    # views = session.
 
     user_ids = {user.userId: idx for idx, user in enumerate(users)}
     video_ids = {video.id: idx for idx, video in enumerate(videos)}
@@ -21,7 +23,7 @@ def get_latest_data():
     matrix = np.zeros((len(users), len(videos)))
 
     for like in likes:
-        print(like.like_value, like.user_id, like.video_id)
+        # print(like.like_value, like.user_id, like.video_id)
         user_idx = user_ids[like.user_id]
         video_idx = video_ids[like.video_id]
         # Assign 1 for like, -1 for dislike
@@ -43,13 +45,13 @@ def compute_similarity(matrix, user_vector):
     for i, norm_row in enumerate(norm_matrix):
         if norm_user_vector * norm_row != 0:
 
-            similarity[i] += user_vector.dot(matrix[i]) # ????
-            similarity[i] /= (norm_user_vector * norm_row)
+            similarity[i] += np.sum(user_vector.dot(matrix[i])) # ????
+            similarity[i] /= np.sum(norm_user_vector * norm_row)
 
     # compute similarity
 
-    print(similarity)
-    print(np.shape(similarity))
+    # print(similarity)
+    # print(np.shape(similarity))
 
     return similarity
 
@@ -94,4 +96,7 @@ def recommend_videos(user_id, num_vids):
     video_ids_reverse = {v: k for k, v in video_ids.items()}
     return [video_ids_reverse[idx] for idx in recommended_idxs[:num_vids]]
 
-print(recommend_videos('01931ce1-44ce-7aa8-ba5b-38cbae330fcc', num_vids=5))
+# start = time.time()
+# print(recommend_videos('01931ce1-44ce-7aa8-ba5b-38cbae330fcc', num_vids=5))
+# end = time.time()
+# print(end - start)
