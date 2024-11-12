@@ -65,9 +65,9 @@ export default function Video({ videoURL, index, currentVideoIndex, button}) {
             playerRef.current.initialize(videoElementRef.current, videoURL, false);
             playerRef.current.on(dashjs.MediaPlayer.events.MANIFEST_LOADED, () => {
                 console.log(`Manifest for ${index} has loaded`);
-                axios.post('/api/log', {
-                    manifest: `Manifest for ${index} has loaded!`
-                });
+                // axios.post('/api/log', {
+                //     manifest: `Manifest for ${index} has loaded!`
+                // });
             })
             playerRef.current.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function () {
                 // Retrieve available video quality levels
@@ -80,11 +80,11 @@ export default function Video({ videoURL, index, currentVideoIndex, button}) {
             });
             playerRef.current.on(dashjs.MediaPlayer.events.ERROR, (e) => {
                 console.log(`Error on player ${index}`, e);
-                axios.post('/api/log', {
-                    error: `Manifest for ${index} has an error!
-                    ${e}
-                    `
-                });
+                // axios.post('/api/log', {
+                //     error: `Manifest for ${index} has an error!
+                //     ${e}
+                //     `
+                // });
             })
             let controlbar = new ControlBar(playerRef.current);
             // console.log('index', index);
@@ -120,15 +120,15 @@ export default function Video({ videoURL, index, currentVideoIndex, button}) {
         if (videoElementRef.current) {
             if (videoElementRef.current.paused) {
                 videoElementRef.current.play();
-                axios.post('/api/log', {
-                    play: `Playing video ${index}.`
-                });
+                // axios.post('/api/log', {
+                //     play: `Playing video ${index}.`
+                // });
                 setIsPlaying(true);
             } else {
                 videoElementRef.current.pause();
-                axios.post('/api/log', {
-                    pause: `Pausing video ${index}.`
-                });
+                // axios.post('/api/log', {
+                //     pause: `Pausing video ${index}.`
+                // });
                 setIsPlaying(false);
             }
         }

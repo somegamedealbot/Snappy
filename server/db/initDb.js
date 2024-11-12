@@ -44,11 +44,11 @@ const init = async () => {
         }
       });
 
-      let testUser = await User.findOne({
-        where: {
-          username: 'test_user'
-        }
-      });
+      // let testUser = await User.findOne({
+      //   where: {
+      //     username: 'test_user'
+      //   }
+      // });
 
       if (!admin) {
         admin = User.build({
@@ -63,17 +63,17 @@ const init = async () => {
 
       }
 
-      if (!testUser) {
-        testUser = User.build({
-          username: 'test_user',
-          email: 'test@test.com',
-          password: password,
-          key: null,
-          userId: "01930e5b-f5ca-7dda-9b97-ff9e2532ba4c" // fixed uuidv7()
-        });
-        await admin.save();
-        console.log('Created test user!');
-      }
+      // if (!testUser) {
+      //   testUser = User.build({
+      //     username: 'test_user',
+      //     email: 'test@test.com',
+      //     password: password,
+      //     key: null,
+      //     userId: "01930e5b-f5ca-7dda-9b97-ff9e2532ba4c" // fixed uuidv7()
+      //   });
+      //   await admin.save();
+      //   console.log('Created test user!');
+      // }
 
       if (force){
         // run the loadData function

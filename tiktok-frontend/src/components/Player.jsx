@@ -35,27 +35,30 @@ function Player() {
             const count = 1;
             const response = await axios.post(`${baseURL}/api/videos`, {count});
             const newVideoUrl = response.data.videos[0];
+            // console.log("fetch new video" , response.data.videos[0])
             const videoUrls = `${baseURL}/api/manifest/${newVideoUrl.id}`
             // Check if the URL is already in the list to avoid duplicates
-            if (!mpdUrls.includes(videoUrls)) {
+            // console.log()
+            // if (!mpdUrls.includes(videoUrls)) {
+
                 setMpdUrls((prevUrls) => [...prevUrls, videoUrls]);
-            }
+            // }
         } catch (error) {
             console.error("Failed to fetch new video:", error);
         }
     };
 
     const isCooldownRef = useRef(false);
-    const cooldownTime = 50
+    const cooldownTime = 20
 
     // Function to handle mouse wheel scroll for changing videos
     const handleWheelScroll = async (event) => {
 
         if (isCooldownRef.current) return; // If still in cooldown, exit early
         if (event.deltaY > 0) {
-            axios.post('/api/log', {
-                scrolling: `Current index ${currentVideoIndex}, Scrolling down`
-            });
+            // axios.post('/api/log', {
+            //     scrolling: `Current index ${currentVideoIndex}, Scrolling down`
+            // });
             // Scroll down, show next video
             await fetchNewVideo(); // Fetch a new video URL every time you scroll down
             // console.log(mpdUrls)
@@ -66,9 +69,9 @@ function Player() {
             
         } else {
             // Scroll up, show previous video
-            axios.post('/api/log', {
-                scrolling: `Current index ${currentVideoIndex}, Scrolling up`
-            });
+            // axios.post('/api/log', {
+            //     scrolling: `Current index ${currentVideoIndex}, Scrolling up`
+            // });
             if(currentVideoIndex > 0){
                 setCurrentVideoIndex((prevIndex) => (prevIndex - 1 + mpdUrls.length) % mpdUrls.length);
             }

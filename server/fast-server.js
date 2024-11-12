@@ -6,7 +6,7 @@ const { authApiRoutes, unauthApiRoutes} = require('./fast-api');
 const initDb = require('./db/initDb');
 
 const app = fastify({
-    logger: true
+    logger: false
 });
 
 const store = new RedisStore({

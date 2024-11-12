@@ -149,7 +149,7 @@ def recommend_videos(user_id, num_vids):
             new_recs.add(vid[0])
 
     # if set is <= 5 keep the set
-    if len(prev_recs) + len(recommended) < 6:
+    if len(prev_recs) + len(recommended) < 16:
         previously_recommended[user_id] = prev_recs.union(new_recs)
     # other wise new recommended set is added for that user
     else:

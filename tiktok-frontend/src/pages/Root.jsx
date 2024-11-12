@@ -31,11 +31,11 @@ function Root() {
             <Link to={`/play/${thumbnailObject.id}`}>
               <img
                 src={`http://wbill.cse356.compas.cs.stonybrook.edu/api/thumbnail/${thumbnailObject.id}`}
-                alt={thumbnailObject.metadata.title}
+                alt={thumbnailObject.title}
               />
             </Link>
-            <h1>{thumbnailObject.metadata.title}</h1>
-            <h2>{thumbnailObject.metadata.description}</h2>
+            <h1>{thumbnailObject.title}</h1>
+            <h2>{thumbnailObject.description}</h2>
           </div>
         ))}
       </div>

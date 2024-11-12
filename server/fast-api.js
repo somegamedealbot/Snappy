@@ -206,52 +206,52 @@ async function authApiRoutes(fastify, options){
         });
     })
     
-    fastify.post('/videos', async (request, reply) => {
-        const maxRetries = 3;
-        let attempt = 0;
-        const count = parseInt(request.body.count);
-        const vidsInfo = []
-        while (attempt < maxRetries) {
-            try {
-                // temporary randomly select videos
-                const videos = await Video.findAll({
-                    order: sequelize.random(),
-                    group: 'id',
-                    limit: count,
-                });
+    // fastify.post('/videos', async (request, reply) => {
+    //     const maxRetries = 3;
+    //     let attempt = 0;
+    //     const count = parseInt(request.body.count);
+    //     const vidsInfo = []
+    //     while (attempt < maxRetries) {
+    //         try {
+    //             // temporary randomly select videos
+    //             const videos = await Video.findAll({
+    //                 order: sequelize.random(),
+    //                 group: 'id',
+    //                 limit: count,
+    //             });
                 
-                const vidsInfo = videos.map(vid => ({
-                    id: vid.id,
-                    metadata: {
-                      title: vid.title,
-                      description: vid.description
-                    }
-                }));
+    //             const vidsInfo = videos.map(vid => ({
+    //                 id: vid.id,
+    //                 metadata: {
+    //                   title: vid.title,
+    //                   description: vid.description
+    //                 }
+    //             }));
     
-                return reply.send({
-                    status: 'OK',
-                    videos: vidsInfo
-                });
+    //             return reply.send({
+    //                 status: 'OK',
+    //                 videos: vidsInfo
+    //             });
                 
-            }
+    //         }
 
-            catch(error) {
-                attempt += 1;
-                request.log.warn(`Attempt ${attempt} failed: ${error.message}`);
+    //         catch(error) {
+    //             attempt += 1;
+    //             request.log.warn(`Attempt ${attempt} failed: ${error.message}`);
     
-                // If all retries fail, log the error and send a 500 response
-                if (attempt === maxRetries) {
-                    request.log.error('Max retry attempts reached.');
-                    return reply.code(500).send({
-                        status: 'ERROR',
-                        message: 'Failed to retrieve videos after multiple attempts',
-                    });
-                }
-            }
-        }
-    });
+    //             // If all retries fail, log the error and send a 500 response
+    //             if (attempt === maxRetries) {
+    //                 request.log.error('Max retry attempts reached.');
+    //                 return reply.code(500).send({
+    //                     status: 'ERROR',
+    //                     message: 'Failed to retrieve videos after multiple attempts',
+    //                 });
+    //             }
+    //         }
+    //     }
+    // });
 
-    fastify.post('/videos-test', async(request, reply) => {
+    fastify.post('/videos', async(request, reply) => {
         const count = request.body.count;
         const id = request.session.userId;
 
@@ -274,7 +274,7 @@ async function authApiRoutes(fastify, options){
                     [Op.in]: videoIds
                 }
             },
-            // limit: count,
+            limit: count,
             include: [
                 {
                     model: View,
@@ -302,7 +302,8 @@ async function authApiRoutes(fastify, options){
                 title: vid.title,
                 description: vid.description,
                 watched: vid.UserVideoViews[0] ? true : false,
-                liked: vid.UserVideoLikes[0] ? vid.UserVideoLikes[0].like_value: null
+                liked: vid.UserVideoLikes[0] === null ? vid.UserVideoLikes[0].like_value: null,
+                likevalues: vid.likes
             }
         })
 

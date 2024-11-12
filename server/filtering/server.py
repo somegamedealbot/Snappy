@@ -3,6 +3,8 @@ from filtering import recommend_videos
 
 app = Flask(__name__)
 
+# redis tracking all videos already passed
+
 @app.route('/test', methods=['GET'])
 def test():
     return 'TEST'
