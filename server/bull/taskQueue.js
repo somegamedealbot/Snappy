@@ -47,14 +47,9 @@ taskQueue.process(5, async (job, done) => {
     }
 
     const processCmd = `ffmpeg -i "${mp4_location}" \\
-    -map 0:v -b:v:0 254k -s:v:0 320x180 -sws_flags lanczos \\
-    -map 0:v -b:v:1 507k -s:v:1 320x180 \\
-    -map 0:v -b:v:2 759k -s:v:2 480x270 \\
-    -map 0:v -b:v:3 1013k -s:v:3 640x360 \\
-    -map 0:v -b:v:4 1254k -s:v:4 640x360 \\
-    -map 0:v -b:v:5 1883k -s:v:5 768x432 \\
-    -map 0:v -b:v:6 3134k -s:v:6 1024x576 \\
-    -map 0:v -b:v:7 4952k -s:v:7 1280x720 \\
+    -map 0:v -b:v:0 512k -s:v:0 640x360 \\
+    -map 0:v -b:v:1 768k -s:v:1 960x540 \\
+    -map 0:v -b:v:2 1024k -s:v:2 1280x720 \\
     -adaptation_sets "id=0,streams=v" \\
     -init_seg_name 'segments/${id}_init_$RepresentationID$.m4s' \\
     -media_seg_name 'segments/${id}_chunk_$Bandwidth$_$Number$.m4s' \\
@@ -62,7 +57,6 @@ taskQueue.process(5, async (job, done) => {
     -vf "pad=width=max(iw\\,ih*(16/9)):height=ow/(16/9):x=(ow-iw)/2:y=(oh-ih)/2" \\
     -f dash "${process.env.SEGMENTS_LOCATION}/${id}/${id}.mpd"`;
     
-
         await execP(processCmd);
 
         const thumbnailCmd = `ffmpeg -i "${mp4_location}" \
