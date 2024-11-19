@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from filtering import recommend_videos
+from filtering import recommend_videos, similar_videos
 
 app = Flask(__name__)
 
@@ -12,9 +12,14 @@ def test():
 @app.route('/', methods=['POST'])
 def recommend():
     count = int(request.form.get('count'))
-    id = request.form.get('id')
-    # get recommended videos from api
-    ids = recommend_videos(id, count)
+    video_id = request.form.get('videoId')
+    if video_id:
+        # find similar videos given the video_id
+        ids = similar_videos(video_id, count)
+    else:
+        user_id = request.form.get('id')
+        # get recommended videos from api
+        ids = recommend_videos(user_id, count)
     
     return jsonify(ids)
 

@@ -8,10 +8,23 @@ import time
 # keep track of the last 10 videos recommended to each user and don't reuse them
 
 previously_recommended = {}
-
 engine = create_engine('sqlite:////root/cse-356-warmup-project-2/main.db')
-
 session = sessionmaker(bind=engine)()
+
+def create_matrix(likes, users, videos):
+
+    # maps ids to indices
+    user_ids = {user.userId: idx for idx, user in enumerate(users)}
+    video_ids = {video.id: idx for idx, video in enumerate(videos)}
+
+    matrix = np.zeros(len(users), len(videos))
+
+    for like in likes:
+        user_idx = user_ids[like.user_id]
+        video_idx = video_ids[like.video_id]
+        matrix[user_idx, video_idx] = 1 if like.like_value else -1
+
+    return matrix, user_ids, video_ids
 
 def get_latest_data(user_id):
 
@@ -24,27 +37,27 @@ def get_latest_data(user_id):
     for vid in viewed_vids:
         viewed.add(vid[0])
 
-    user_ids = {user.userId: idx for idx, user in enumerate(users)}
-    video_ids = {video.id: idx for idx, video in enumerate(videos)}
-
-    matrix = np.zeros((len(users), len(videos)))
-
-    for like in likes:
-        # print(like.like_value, like.user_id, like.video_id)
-        user_idx = user_ids[like.user_id]
-        video_idx = video_ids[like.video_id]
-        # Assign 1 for like, -1 for dislike
-        matrix[user_idx, video_idx] = 1 if like.like_value else -1
-
+    matrix, user_ids, video_ids = create_matrix(likes, users, videos)
     return matrix, user_ids, video_ids, viewed
 
-def compute_similarity(matrix, user_vector):
+def get_vids_and_likes():
+    videos = session.query(Video).all()
+    likes = session.query(Like).all()
+    users = session.query(User).all()
+    
+    # gets matrix and ids to indices mappings
+    matrix, user_ids, video_ids = create_matrix(likes, users, videos)
+    
+    return matrix, user_ids, video_ids
+
+def compute_similarity(matrix, user_vector, vid_sim=False):
     
     # normalize vectors in matrix: self divide by norm
     norm_user_vector = np.linalg.norm(user_vector, keepdims=True)
 
     # (users, 1)
-    norm_matrix = (np.linalg.norm(matrix, axis=1, keepdims=True))
+    axis = 0 if vid_sim else 1
+    norm_matrix = (np.linalg.norm(matrix, axis=axis, keepdims=True))
 
     # (1, users)
     similarity = np.zeros(np.shape(norm_matrix)[0])
@@ -56,6 +69,25 @@ def compute_similarity(matrix, user_vector):
             similarity[i] /= np.sum(norm_user_vector * norm_row)
 
     return similarity
+
+# used for finding similar videos based on video_id
+def similar_videos(video_id, num_vids):
+    matrix, _, video_ids = get_vids_and_likes()
+    video_idx = video_ids[video_id]
+
+    video_id_vector = matrix[:, video_idx]
+    
+    vids_similarity = compute_similarity(matrix, video_id_vector, True)
+    
+    # 0 out the video vector for the video_ig given
+    vids_similarity[video_idx] = 0
+
+    # truncate to number of similar videos requested
+    similar_video_idxs= np.argsort(-vids_similarity)[num_vids:]
+    
+    video_ids_reverse = {v: k for k, v in video_ids.items()}
+    recommended = [video_ids_reverse[idx] for idx in similar_video_idxs]
+    return recommended
 
 def recommend_videos(user_id, num_vids):
 
@@ -72,10 +104,6 @@ def recommend_videos(user_id, num_vids):
     user_map_id = user_ids[user_id]
     user_vector = matrix[user_map_id]
     sim_to_others = compute_similarity(matrix, user_vector)
-    # print(sim_to_others)
-    # get mapping of user id
-   
-    # sim_users = sim_matrix[user_map_id]
 
     # removes self to not compare with self
     sim_to_others[user_map_id] = 0 
@@ -159,5 +187,5 @@ def recommend_videos(user_id, num_vids):
         raise Exception('Too many videos ', + len(recommended))
 
     return recommended
-
+    
 # print(recommend_videos('01931e95-77fa-7009-8e88-1e4a09b1bc72', num_vids=5))
