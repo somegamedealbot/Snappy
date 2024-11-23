@@ -30,14 +30,19 @@ def get_latest_data(user_id):
     users = session.query(User).all()
     videos = session.query(Video).all()
     likes = session.query(Like).all()
+    
+
+    matrix, user_ids, video_ids = create_matrix(likes, users, videos)
+    return matrix, user_ids, video_ids
+
+def get_viewed_vids(user_id):
     viewed_vids = session.execute(select(View.video_id).where(View.user_id == user_id))
 
     viewed = set()
     for vid in viewed_vids:
         viewed.add(vid[0])
-
-    matrix, user_ids, video_ids = create_matrix(likes, users, videos)
-    return matrix, user_ids, video_ids, viewed
+    
+    return viewed
 
 def get_vids_and_likes():
     videos = session.query(Video).all()
@@ -85,13 +90,13 @@ def similar_videos(video_id, num_vids):
     vids_similarity[video_idx] = 0
 
     # truncate to number of similar videos requested
-    similar_video_idxs= np.argsort(-vids_similarity)[:num_vids]
+    similar_video_idxs = np.argsort(-vids_similarity)
     
     video_ids_reverse = {v: k for k, v in video_ids.items()}
-    recommended = [video_ids_reverse[idx] for idx in similar_video_idxs]
-    return recommended
+    # recommended = [video_ids_reverse[idx] for idx in similar_video_idxs]
+    return similar_video_idxs, video_ids_reverse
 
-def recommend_videos(user_id, num_vids):
+def recommend_videos(user_id, num_vids, video_id):
 
     # user does not have any videos    
     if previously_recommended.get(user_id) == None:
@@ -101,30 +106,35 @@ def recommend_videos(user_id, num_vids):
 
     new_recs = set()
 
-    # mappings of user ids and video ids
-    matrix, user_ids, video_ids, viewed = get_latest_data(user_id)
-    user_map_id = user_ids[user_id]
-    user_vector = matrix[user_map_id]
-    sim_to_others = compute_similarity(matrix, user_vector)
+    if not video_id: 
 
-    # removes self to not compare with self
-    sim_to_others[user_map_id] = 0 
+        # mappings of user ids and video ids
+        matrix, user_ids, video_ids = get_latest_data(user_id)
+        user_map_id = user_ids[user_id]
+        user_vector = matrix[user_map_id]
+        sim_to_others = compute_similarity(matrix, user_vector)
+
+        # removes self to not compare with self
+        sim_to_others[user_map_id] = 0 
+        
+        # # similarity scores
+        weighted_scores = sim_to_others @ matrix
+        # user_interactions = matrix[user_map_id]
+
+        # # videos that were not liked/disliked
+        # no_action_ids = np.where(user_interactions == 0)[0]
+
+        # # make sure that the view the recommendations have not been viewed yet
+        # # prefer:
+        # # 1. Recommended videos that have not been viewed
+        # # 2. random videos (not been viewed before)
+        # # 3. just random videos if eveything has been viewed
+        video_ids_reverse = {v: k for k, v in video_ids.items()}
+        recommended_idxs = np.argsort(-weighted_scores)
+    else: 
+        recommended_idxs, video_ids_reverse = similar_videos(video_id, num_vids)
     
-    # # similarity scores
-    weighted_scores = sim_to_others @ matrix
-    user_interactions = matrix[user_map_id]
-
-    # # videos that were not liked/disliked
-    unviewed_video_ids = np.where(user_interactions == 0)[0]
-
-    # # make sure that the view the recommendations have not been viewed yet
-    # # prefer:
-    # # 1. Recommended videos that have not been viewed
-    # # 2. random videos (not been viewed before)
-    # # 3. just random videos if eveything has been viewed
-
-    recommended_idxs = unviewed_video_ids[np.argsort(-weighted_scores[unviewed_video_ids])]
-    video_ids_reverse = {v: k for k, v in video_ids.items()}
+    viewed = get_viewed_vids(user_id)
 
     recommended = []
     r_i = 0
@@ -178,14 +188,12 @@ def recommend_videos(user_id, num_vids):
             recommended.append(vid[0])
             new_recs.add(vid[0])
 
-
-    # TEST WITH THIS TAKEN OUT
     # if set is <= 5 keep the set
-    # if len(prev_recs) + len(recommended) < 21:
-    #     previously_recommended[user_id] = prev_recs.union(new_recs)
-    # # other wise new recommended set is added for that user
-    # else:
-    #     previously_recommended[user_id] = new_recs
+    if len(prev_recs) + len(recommended) < 16:
+        previously_recommended[user_id] = prev_recs.union(new_recs)
+    # other wise new recommended set is added for that user
+    else:
+        previously_recommended[user_id] = new_recs
 
     if len(recommended) > num_vids:
         raise Exception('Too many videos ', + len(recommended))
