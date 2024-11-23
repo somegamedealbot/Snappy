@@ -208,7 +208,7 @@ async function authApiRoutes(fastify, options){
 
     fastify.post('/videos', async(request, reply) => {
         const count = request.body.count;
-        const videoId = request.body.videoId;
+        const videoId = request.body.videoId?.id ?? undefined;
         const id = request.session.userId;
 
         request.log.info({
