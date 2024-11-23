@@ -6,6 +6,7 @@ const Upload = () => {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
+    const [description, setDescription] = useState('')
     const [file, setFile] = useState(null);
     const [statusMessage, setStatusMessage] = useState('');
 
@@ -26,6 +27,7 @@ const Upload = () => {
         const formData = new FormData();
         formData.append('title', title);
         formData.append('author', author);
+        formData.append('description', description);
         formData.append('mp4File', file);
 
         try {
@@ -42,6 +44,7 @@ const Upload = () => {
                 setStatusMessage('Video uploaded successfully!');
                 setTitle('');
                 setAuthor('');
+                setDescription('');
                 setFile(null);
                 navigate('/'); // Redirect to homepage after successful upload
             }
@@ -72,6 +75,16 @@ const Upload = () => {
                         id="author"
                         value={author}
                         onChange={(e) => setAuthor(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="description">setDescription:</label>
+                    <input
+                        type="text"
+                        id="description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
                         required
                     />
                 </div>

@@ -5,7 +5,7 @@ import Video from './Video.jsx';
 import '../css/controlbar.css';
 
 function Player() {
-    const baseURL = 'http://wbill.cse356.compas.cs.stonybrook.edu';
+    const baseURL = 'https://wbill.cse356.compas.cs.stonybrook.edu';
     const initialUrls = useLoaderData(); // Initial array of video URLs
     const [mpdUrls, setMpdUrls] = useState(initialUrls);
     const [currentVideoIndex, setCurrentVideoIndex] = useState(0);

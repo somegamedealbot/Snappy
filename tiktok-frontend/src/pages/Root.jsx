@@ -30,7 +30,7 @@ function Root() {
           <div className="thumbnail-item" key={index}>
             <Link to={`/play/${thumbnailObject.id}`}>
               <img
-                src={`http://wbill.cse356.compas.cs.stonybrook.edu/api/thumbnail/${thumbnailObject.id}`}
+                src={`https://wbill.cse356.compas.cs.stonybrook.edu/api/thumbnail/${thumbnailObject.id}`}
                 alt={thumbnailObject.title}
               />
             </Link>

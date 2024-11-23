@@ -7,7 +7,7 @@ import Player from './components/Player';
 import Upload from './pages/Upload.jsx';
 import axios from 'axios';
 
-const baseURL = "http://wbill.cse356.compas.cs.stonybrook.edu";
+const baseURL = "https://wbill.cse356.compas.cs.stonybrook.edu";
 const folder = '../var/www/media'
 axios.defaults.baseURL = baseURL;
 
