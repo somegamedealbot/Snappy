@@ -50,6 +50,7 @@ taskQueue.process(5, async (job, done) => {
     -map 0:v -b:v:0 512k -s:v:0 640x360 \\
     -map 0:v -b:v:1 768k -s:v:1 960x540 \\
     -map 0:v -b:v:2 1024k -s:v:2 1280x720 \\
+    -preset fast \\
     -adaptation_sets "id=0,streams=v" \\
     -init_seg_name 'segments/${id}_init_$RepresentationID$.m4s' \\
     -media_seg_name 'segments/${id}_chunk_$Bandwidth$_$Number$.m4s' \\

@@ -4,7 +4,16 @@ const { pipeline } = require('stream/promises');
 const { Video, User } = require('./db/schemas');
 const {v7: uuidv7} = require('uuid');
 require('dotenv').config();
-const { taskQueue } = require('./bull/taskQueue');
+const Queue = require('bull');
+
+const redisConfig = {
+    host: '127.0.0.1', // Redis server address
+    port: 6379,        // Redis server port
+}
+
+const videoQueue = new Queue('videoQueue', {
+    redis: redisConfig
+})
 
 const app = fastify({
     // logger: true
@@ -69,7 +78,7 @@ app.post('/', async (request, reply) => {
     });
 
     // send it for processing here
-    taskQueue.add({
+    videoQueue.add({
         title,
         mp4_location: `/root/videos/${uploadedFileName}`,
         id: id,
