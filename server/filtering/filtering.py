@@ -3,12 +3,11 @@ from sqlalchemy.orm import sessionmaker, session
 from schemas import User, Video, Like, View
 import numpy as np
 import time
-
 # use redis tracking all videos already passed
 # keep track of the last 10 videos recommended to each user and don't reuse them
 
 previously_recommended = {}
-engine = create_engine('sqlite:////root/cse-356-warmup-project-2/main.db')
+engine = create_engine('postgresql+psycopg://postgres:password@10.0.3.215:5432/tiktok')
 session = sessionmaker(bind=engine)()
 
 def create_matrix(likes, users, videos):
@@ -17,7 +16,7 @@ def create_matrix(likes, users, videos):
     user_ids = {user.userId: idx for idx, user in enumerate(users)}
     video_ids = {video.id: idx for idx, video in enumerate(videos)}
 
-    matrix = np.zeros(len(users), len(videos))
+    matrix = np.zeros((len(users), len(videos)))
 
     for like in likes:
         user_idx = user_ids[like.user_id]
@@ -57,15 +56,18 @@ def compute_similarity(matrix, user_vector, vid_sim=False):
 
     # (users, 1)
     axis = 0 if vid_sim else 1
-    norm_matrix = (np.linalg.norm(matrix, axis=axis, keepdims=True))
+    
+    # keepdims is True when comparing between users (rows)
+    # keepdism is False when comparing between videos (col)
+    norm_keepdims = True if vid_sim == False else False
+    norm_matrix = (np.linalg.norm(matrix, axis=axis, keepdims=norm_keepdims))
 
     # (1, users)
     similarity = np.zeros(np.shape(norm_matrix)[0])
 
     for i, norm_row in enumerate(norm_matrix):
         if norm_user_vector * norm_row != 0:
-
-            similarity[i] += np.sum(user_vector.dot(matrix[i])) # ????
+            similarity[i] += np.sum(user_vector.dot(matrix[i] if not vid_sim else matrix[:, i])) # ????
             similarity[i] /= np.sum(norm_user_vector * norm_row)
 
     return similarity
@@ -83,7 +85,7 @@ def similar_videos(video_id, num_vids):
     vids_similarity[video_idx] = 0
 
     # truncate to number of similar videos requested
-    similar_video_idxs= np.argsort(-vids_similarity)[num_vids:]
+    similar_video_idxs= np.argsort(-vids_similarity)[:num_vids]
     
     video_ids_reverse = {v: k for k, v in video_ids.items()}
     recommended = [video_ids_reverse[idx] for idx in similar_video_idxs]
@@ -176,12 +178,14 @@ def recommend_videos(user_id, num_vids):
             recommended.append(vid[0])
             new_recs.add(vid[0])
 
+
+    # TEST WITH THIS TAKEN OUT
     # if set is <= 5 keep the set
-    if len(prev_recs) + len(recommended) < 16:
-        previously_recommended[user_id] = prev_recs.union(new_recs)
-    # other wise new recommended set is added for that user
-    else:
-        previously_recommended[user_id] = new_recs
+    # if len(prev_recs) + len(recommended) < 21:
+    #     previously_recommended[user_id] = prev_recs.union(new_recs)
+    # # other wise new recommended set is added for that user
+    # else:
+    #     previously_recommended[user_id] = new_recs
 
     if len(recommended) > num_vids:
         raise Exception('Too many videos ', + len(recommended))
