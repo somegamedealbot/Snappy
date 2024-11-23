@@ -7,7 +7,7 @@ require('dotenv').config();
 const { taskQueue } = require('./bull/taskQueue');
 
 const app = fastify({
-    logger: true
+    // logger: true
 });
 
 app.register(require('@fastify/multipart'), {
@@ -35,6 +35,7 @@ app.post('/', async (request, reply) => {
 
     const author = request.body.author.value;
     const title = request.body.title.value;
+    const description = request.body.description.value;
     const uploadedFileName = request.body.uploadedFileName?.value;
 
     // request.log.info({body: request.body});
@@ -54,7 +55,7 @@ app.post('/', async (request, reply) => {
     const video = await Video.create({
         id: id,
         title,
-        description: "",
+        description,
         author,
         author_id: user.userId  // find by querying username
     });

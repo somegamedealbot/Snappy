@@ -9,8 +9,11 @@ const { taskQueue } = require('./bull/taskQueue');
 
 const keys = Object.keys(metadata);
 
+// clear database
+
+
 // create video-info.json file if it doesn't exist
-if (!fs.existsSync('../video-info.json')) {
+if (!fs.existsSync('/root/video-info.json')) {
 
     const videoInfo = {};
     // build json file
@@ -29,15 +32,19 @@ if (!fs.existsSync('../video-info.json')) {
     }
     
     // write to json file
-    fs.writeFileSync('../video-info.json', JSON.stringify(videoInfo));
+    fs.writeFileSync('/root/video-info.json', JSON.stringify(videoInfo));
 
 }
 
 (async () => {
 
-    const videoInfo = JSON.parse(fs.readFileSync('../video-info.json'));
+    const videoInfo = JSON.parse(fs.readFileSync('/root/video-info.json'));
     const videoKeys = Object.keys(videoInfo);
+    let queued = 0;
     for (const id of videoKeys){
+        if (queued === 100) {
+            break;
+        }
         const { title, description, author, filename } = videoInfo[id]; 
 
         let admin = await User.findOne({
@@ -64,6 +71,7 @@ if (!fs.existsSync('../video-info.json')) {
             attempts: 3
         });
 
+        queued += 1;
         console.log(`Added task: [${title}]:${id}`);
     }
 

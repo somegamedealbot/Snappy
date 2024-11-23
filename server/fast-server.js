@@ -3,10 +3,11 @@ const fastifySession = require('@fastify/session');
 const Redis = require('ioredis')
 const RedisStore = require('connect-redis').default
 const { authApiRoutes, unauthApiRoutes} = require('./fast-api');
+require('dotenv').config();
 const initDb = require('./db/initDb');
 
 const app = fastify({
-    logger: false
+    logger: true
 });
 
 const store = new RedisStore({

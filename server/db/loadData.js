@@ -11,8 +11,13 @@ const loadData = async () => {if (fs.existsSync('../video-info.json')) {
           username: 'admin'
         }
     });
+
+    let count = 0;
     
     for (const id of videoKeys){
+        if (count === 100){
+            break;
+        }
         const { title, description, author} = videoInfo[id]; 
 
         videos.push({
@@ -25,9 +30,11 @@ const loadData = async () => {if (fs.existsSync('../video-info.json')) {
         });
         // await newVideo.save();
         console.log(`Added video: [${title}]:${id}`);
+
+        count += 1;
     }
 
-    Video.bulkCreate(videos, {
+    await Video.bulkCreate(videos, {
         validate: true
     });
 

@@ -1,8 +1,10 @@
 const {Sequelize, DataTypes} = require('sequelize');
+require('dotenv').config();
 
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'main.db',
+// connect to postgres database instead
+const sequelize = new Sequelize(process.env.POSTGRES_URI, {
+  dialect: 'postgres',
+  logging: false
 });
 
 const Like = sequelize.define('UserVideoLike', {

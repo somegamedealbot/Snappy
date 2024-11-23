@@ -16,7 +16,7 @@ console.log('Transport Created');
 
 const sendMail = async (destEmail, key) =>{
 
-    const url = new URL(`http://wbill.cse356.compas.cs.stonybrook.edu/api/verify?`);
+    const url = new URL(`https://wbill.cse356.compas.cs.stonybrook.edu/api/verify?`);
     url.searchParams.append('email', destEmail);
     url.searchParams.append('key', key);
     // const url = new URL('http://wbill.cse356.compas.cs.stonybrook.edu:')

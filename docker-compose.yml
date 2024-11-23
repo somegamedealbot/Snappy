@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:15   # Specify the PostgreSQL version
+    container_name: postgres-container
+    environment:
+      POSTGRES_PASSWORD: password  # Set the PostgreSQL password
+      POSTGRES_DB: tiktok
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data  # Bind the volume for persistent data storage
+    deploy:
+      resources:
+        limits:
+          memory: 2g    # Limit memory usage to 2GB
+          cpus: '1.0'   # Limit CPU usage to 1 CPU core
+    ports:
+      - "5432:5432"  # Expose PostgreSQL on the default port
+    restart: unless-stopped  # Restart policy

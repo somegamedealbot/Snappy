@@ -205,66 +205,25 @@ async function authApiRoutes(fastify, options){
             userId: request.session.userId // add user id implementation here
         });
     })
-    
-    // fastify.post('/videos', async (request, reply) => {
-    //     const maxRetries = 3;
-    //     let attempt = 0;
-    //     const count = parseInt(request.body.count);
-    //     const vidsInfo = []
-    //     while (attempt < maxRetries) {
-    //         try {
-    //             // temporary randomly select videos
-    //             const videos = await Video.findAll({
-    //                 order: sequelize.random(),
-    //                 group: 'id',
-    //                 limit: count,
-    //             });
-                
-    //             const vidsInfo = videos.map(vid => ({
-    //                 id: vid.id,
-    //                 metadata: {
-    //                   title: vid.title,
-    //                   description: vid.description
-    //                 }
-    //             }));
-    
-    //             return reply.send({
-    //                 status: 'OK',
-    //                 videos: vidsInfo
-    //             });
-                
-    //         }
-
-    //         catch(error) {
-    //             attempt += 1;
-    //             request.log.warn(`Attempt ${attempt} failed: ${error.message}`);
-    
-    //             // If all retries fail, log the error and send a 500 response
-    //             if (attempt === maxRetries) {
-    //                 request.log.error('Max retry attempts reached.');
-    //                 return reply.code(500).send({
-    //                     status: 'ERROR',
-    //                     message: 'Failed to retrieve videos after multiple attempts',
-    //                 });
-    //             }
-    //         }
-    //     }
-    // });
 
     fastify.post('/videos', async(request, reply) => {
         const count = request.body.count;
+        const videoId = request.body.videoId;
         const id = request.session.userId;
+
+        request.log.info({
+            count,
+            videoId,
+            id
+        });
 
         // call recommendation server
         const res = await axios.post(`http://${process.env.RECOMMEND_SERVER}`, {
-            count, id
+            count, id, videoId
         },
         {headers: { 'content-type': 'application/x-www-form-urlencoded' }});
 
         const videoIds = res.data;
-        request.log.info({
-            videoIds
-        });
 
         const videos = await Video.findAll({
             // order: sequelize.random(),
@@ -319,7 +278,7 @@ async function authApiRoutes(fastify, options){
         const filename = id + '.mpd';
         const folderPath = process.env.MPD_LOCATION + '/' + id;
         
-        request.log.info({filePath: folderPath + filename});
+        // request.log.info({filePath: folderPath + filename});
         return reply.sendFile(filename, folderPath);
     });
     
@@ -333,18 +292,21 @@ async function authApiRoutes(fastify, options){
     // Like value = true, false, null
     fastify.post('/like', async (request, reply) => {
         const video_id = request.body.id;
-        const like_value = request.body.value;
+        let like_value = request.body.value;
+        if (typeof like_value == 'string') {
+            like_value = like_value === 'true' ? true : false
+        }
         const user_id = request.session.userId;
 
         let updatedLikeCount = 0; 
 
-        request.log.info({
-            likeInfo: {
-                video_id,
-                like_value,
-                user_id
-            }
-        });
+        // request.log.info({
+        //     likeInfo: {
+        //         video_id,
+        //         like_value,
+        //         user_id
+        //     }
+        // });
         // Update / create like
         let like = await Like.findOne({
             where: {
@@ -426,12 +388,12 @@ async function authApiRoutes(fastify, options){
         const video_id = request.body.id;
         const user_id = request.session.userId;
 
-        request.log.info({
-            viewInfo: {
-                video_id,
-                user_id
-            }
-        });
+        // request.log.info({
+        //     viewInfo: {
+        //         video_id,
+        //         user_id
+        //     }
+        // });
         
         let view = await View.findOne({
             where: {
@@ -457,9 +419,9 @@ async function authApiRoutes(fastify, options){
     });
 
     fastify.post('/log', async(request, reply) => {
-        request.log.info({
-            'LOGGING:': request.body
-        });
+        // request.log.info({
+        //     'LOGGING:': request.body
+        // });
         return reply.send({})
     })
 
