@@ -8,6 +8,7 @@ const {v7: uuidv7} = require('uuid');
 
 const proxy = require('@fastify/http-proxy');
 const { default: axios } = require('axios');
+const fastifyStatic = require('@fastify/static');
 
 async function unauthApiRoutes(fastify, options){
     fastify.post('/login', async (request, reply) => {
@@ -150,30 +151,34 @@ async function authApiRoutes(fastify, options){
     // hook for auth on certain paths if needed 
     fastify.addHook('onRequest', async (request, reply) => {
         if (!request.session?.loggedIn) {
-            return reply.code(200).send({ 
-                status: 'ERROR',
-                error: true, 
-                message: 'User not logged in. No session found.'
-            });
+            if (!reply.sent) {
+                return reply.code(200).send({ 
+                    status: 'ERROR',
+                    error: true, 
+                    message: 'User not logged in. No session found.'
+                });
+            }
         }
     });
 
     fastify.addHook('preHandler', async (request, reply) => {
         try {
             if (request.session) {
-                request.log.info({
-                    session: request.session, 
-                    test: 'test_msg'
-                });
+                // request.log.info({
+                //     session: request.session, 
+                //     test: 'test_msg'
+                // });
                 await request.sessionStore.touch(request.session.id);
             }
         } catch (err) {
             request.log.error("Session store error", err);
-            return reply.code(500).send({
-                status: 'ERROR',
-                error: true,
-                message: 'Session error. Please try again.'
-            });
+            if (!reply.sent) {
+                return reply.code(500).send({
+                    status: 'ERROR',
+                    error: true,
+                    message: 'Session error. Please try again.'
+                });
+            }
         }
     });
     
@@ -205,6 +210,7 @@ async function authApiRoutes(fastify, options){
             userId: request.session.userId // add user id implementation here
         });
     })
+
 
     fastify.post('/videos', async(request, reply) => {
         const count = request.body.count;
@@ -266,10 +272,17 @@ async function authApiRoutes(fastify, options){
             }
         })
 
-        return reply.send({
-            status: 'OK',
-            videos: vidsInfo
-        });
+        // if reply was already sent
+        if (!reply.sent) {
+            return reply.send({
+                status: 'OK',
+                videos: vidsInfo
+            });
+        }
+        // stop reply
+        else {
+            reply.raw.end()
+        }
 
     })
         
