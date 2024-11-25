@@ -4,24 +4,47 @@ require('dotenv').config();
 // connect to postgres database instead
 const sequelize = new Sequelize(process.env.POSTGRES_URI, {
   dialect: 'postgres',
-  // logging: true
+  logging: false,
   pool: {
-    max: 10,
-    min: 1,
+    max: 20,
+    min: 5,
     acquire: 30000,
     idle: 10000
-  },
-  logging: false
+  }
 });
 
 const Like = sequelize.define('UserVideoLike', {
   like_value: {
     type: DataTypes.BOOLEAN,
     allowNull: true
+  },
+  user_id: {
+    type: DataTypes.STRING,
+    allowNull: false, // Ensure this field is required
+  },
+  video_id: {
+    type: DataTypes.STRING,
+    allowNull: false, // Ensure this field is required
   }
+}, {
+  indexes: [
+    {
+      name: 'user_video_id',
+      fields: ['user_id', 'video_id'],
+      unique: true
+    }
+  ]
 });
 
 const View = sequelize.define('UserVideoView', {
+}, {
+  // indexes: [
+  //   {
+  //     name: 'user_video_id',
+  //     fields: ['user_id', 'video_id'],
+  //     unique: true
+  //   }
+  // ]
 });
 
 const User = sequelize.define('Users', 

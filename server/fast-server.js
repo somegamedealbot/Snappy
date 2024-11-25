@@ -5,19 +5,27 @@ const RedisStore = require('connect-redis').default
 const { authApiRoutes, unauthApiRoutes} = require('./fast-api');
 require('dotenv').config();
 const initDb = require('./db/initDb');
+const metricsPlugin = require('fastify-metrics');
+
+
 
 const app = fastify({
-    logger: true
+    // logger: true
 });
 
 const store = new RedisStore({
     client: new Redis({
-      enableAutoPipelining: true
+        enableAutoPipelining: true
     })
 })
 
 app.register(require('@fastify/cookie'));
 app.register(require('@fastify/formbody'));
+app.register(metricsPlugin, { 
+    endpoint: '/metrics',
+    defaultMetrics: true, // Include default Node.js metrics (e.g., memory, CPU)
+    enableRouteMetrics: true // Enable metrics collection for each route
+})
 
 // setup database first
 initDb();

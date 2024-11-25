@@ -16,6 +16,7 @@ const loadData = async () => {if (fs.existsSync('../video-info.json')) {
     
     for (const id of videoKeys){
         if (count === 100){
+            console.log('Finished loading data'); 
             break;
         }
         const { title, description, author} = videoInfo[id]; 
