@@ -38,3 +38,6 @@ next-env.d.ts
 
 # video files
 /server/media
+
+test/users.json
+test/videos.json

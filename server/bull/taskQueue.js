@@ -7,7 +7,7 @@ const { Video } = require('../db/schemas');
 const execP = promisify(exec);
 
 const redisConfig = {
-    host: '127.0.0.1', // Redis server address
+    host: '10.0.3.215', // Redis server address
     port: 6379,        // Redis server port
 }
 
@@ -32,7 +32,7 @@ if (!fs.existsSync(process.env.THUMBNAILS_LOCATION)) {
     fs.mkdirSync(process.env.THUMBNAILS_LOCATION);
 }
 
-taskQueue.process(5, async (job, done) => {
+taskQueue.process(4, async (job, done) => {
     const {title, mp4_location, id} = job.data;
     // const mpdLocation = `${process.env.MPD_LOCATION}/${id}.mpd`
     // const segmentLocation = `${process.env.SEGMENTS_LOCATION}/${id}/segments`
@@ -69,16 +69,23 @@ taskQueue.process(5, async (job, done) => {
 
     // update SQL database
     const video = await Video.findByPk(id);
-    // console.log(videos);
-    console.log(`Processed ${title} (${id})!`);
-    // set uploaded flag
-    video.uploaded = true;
-    await video.save();
+
+    if (video) {
+        // console.log(videos);
+        console.log(`Processed ${title} (${id})!`);
+        // set uploaded flag
+        video.uploaded = true;
+        await video.save();
+
+    }
+    else {
+        console.log('ERROR: NO VIDEO FOUND IN DATA BASED FROM ID: ', id);
+    }
 
     done();
 
 })
 
-module.exports = {
-    taskQueue
-};
+// module.exports = {
+//     taskQueue
+// };
