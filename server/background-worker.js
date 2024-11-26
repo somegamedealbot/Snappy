@@ -19,7 +19,7 @@ likeQueue.clean(0, 'delayed');
 likeQueue.clean(0, 'active');
 
 
-likeQueue.process(16, async (job) => {
+likeQueue.process(32, async (job) => {
     const {type, user_like_value, like_num, user_id, video_id} = job.data;
     
     if (type === 'destroy') {

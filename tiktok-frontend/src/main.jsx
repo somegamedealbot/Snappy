@@ -42,13 +42,13 @@ const router = createBrowserRouter([
   {
     path: "/play/:id",
     loader: async ({params}) => {
-      const count = 4;
+      const count = 14;
       try{
         const response = await axios.post(`${baseURL}/api/videos`, { count });
         const videoObjects = response.data.videos;
         const videoUrls = videoObjects.map(video => `${baseURL}/api/manifest/${video.id}`)
         const videoArray = [`${baseURL}/api/manifest/${params.id}`, ...videoUrls];
-        // console.log(videoArray)
+        console.log(videoArray)
         return videoArray;
       }catch(error){
         console.error("Error fetching video URLs", error);

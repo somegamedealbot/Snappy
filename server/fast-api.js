@@ -342,7 +342,10 @@ async function authApiRoutes(fastify, options){
             await redisClient.hSet(video_id, {
                 'likes': vid.likes
             });
-            await redisClient.expire(video_id, 30);
+
+            // spreads the expiration time for redis
+            const randomOffset = Math.floor(20 + Math.random() * 40);
+            await redisClient.expire(video_id, randomOffset);
             likes = vid.likes
 
         }
@@ -404,13 +407,18 @@ async function authApiRoutes(fastify, options){
                 await like.destroy();
 
             }
-            // else if (parsedLikeValue === like.like_value){
-            //     return reply.code(200).send({
-            //         status: 'ERROR',
-            //         error: true, 
-            //         message: 'User already liked/disliked' 
-            //     });
-            // }
+            // if the cache expired and the user is liking the same way
+            else if (parsedLikeValue === like.like_value){
+                // stores to cache this time
+                await redisClient.hSet(video_id,{
+                    [user_id]: parsedLikeValue.toString()
+                });
+                return reply.code(200).send({
+                    status: 'ERROR',
+                    error: true, 
+                    message: 'User already liked/disliked' 
+                });
+            }
             else {
 
                 const changeInLikes = parsedLikeValue === true ? 1 : -1;

@@ -10,13 +10,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 3g    # Limit memory usage to 2GB
-      #     cpus: '1.0'   # Limit CPU usage to 1 CPU core
+          memory: 6g    # Limit memory usage to 2GB
+          cpus: '2.0'   # Limit CPU usage to 1 CPU core
               #  -c maintenance_work_mem=128MB
-              #  -c max_connections=200
               # -c effective_cache_size=768MB
     command: >
       postgres -c shared_buffers=256MB
+               -c max_connections=200
                -c work_mem=32MB
                -c wal_buffers=16MB
                -c temp_buffers=16MB
