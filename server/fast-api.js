@@ -11,6 +11,9 @@ const proxy = require('@fastify/http-proxy');
 const { default: axios } = require('axios');
 const Queue = require('bull');
 
+// let successLikes = 0; 
+// let errorLikes = 0;
+
 const redisConfig = {
     host: '127.0.0.1', // Redis server address
     port: 6379,        // Redis server port
@@ -26,11 +29,12 @@ redisClient.connect();
 async function unauthApiRoutes(fastify, options){
     fastify.post('/login', async (request, reply) => {
         const {username, password} = request.body;
-        
+        // console.log(username);
         try {
         const user = await User.findOne({
             where: {username}
         });
+        
         // User is already verified (key is null)
         if (user && user.key == null){
             // const isPasswordValid = user.password == password
@@ -230,11 +234,13 @@ async function authApiRoutes(fastify, options){
         const videoId = request.body.videoId?.id ?? undefined;
         const id = request.session.userId;
 
-        request.log.info({
-            count,
-            videoId,
-            id
-        });
+        console.log(`Count: ${count}, videoId: ${videoId}, userId: ${id}`);
+
+        // request.log.info({
+        //     count,
+        //     videoId,
+        //     id
+        // });
 
         // call recommendation server
         const res = await axios.post(`http://${process.env.RECOMMEND_SERVER}`, {
@@ -314,18 +320,21 @@ async function authApiRoutes(fastify, options){
         const folderPath = process.env.MPD_LOCATION + '/' + id;
         return reply.sendFile(filename, folderPath);
     });
-
+    
     // Like value = true, false, null
     fastify.post('/like', async (request, reply) => {
         const video_id = request.body.id;
+        const user_id = request.session.userId;
         let like_value = request.body.value;
         
         // uncomment for testing
-        // if (typeof like_value == 'string') {
-        //     like_value = like_value === 'true' ? true : false
-        // }
+        if (typeof like_value == 'string') {
+            like_value = like_value === 'true' ? true : false
+        }
 
         let cached = await redisClient.hGet(video_id, 'likes');
+        // console.log(await redisClient.hGet(video_id, user_id));
+        // console.log(await redisClient.hGet(video_id, 'likes'));
         // cache miss
         let likes = 0;
         if (cached === null) {
@@ -335,11 +344,25 @@ async function authApiRoutes(fastify, options){
             });
             await redisClient.expire(video_id, 30);
             likes = vid.likes
+
         }
         else {
             likes = parseInt(cached)
+            let cached_like = await redisClient.hGet(video_id, user_id);
+            // throw error out earlier here for equal values
+            if (cached_like === like_value.toString()) {
+                // errorLikes += 1
+                // console.log('error likes', errorLikes);
+                // request.log.info({
+                //     errorLikes
+                // });
+                return reply.code(200).send({
+                    status: 'ERROR',
+                    error: true, 
+                    message: 'User already liked/disliked' 
+                });
+            }
         }
-        const user_id = request.session.userId;
 
         let like = await Like.findOne({
             where: {
@@ -363,11 +386,15 @@ async function authApiRoutes(fastify, options){
                     likeQueue.add({
                         type: 'destroy',
                         user_like_value: like_value,
+                        like_num: -1,
                         user_id,
                         video_id
                     })
 
                     await redisClient.hIncrBy(video_id, 'likes', -1)
+                    await redisClient.hSet(video_id,{
+                        [user_id]: parsedLikeValue.toString()
+                    });
                     updatedLikeCount = likes - 1;
                 }
                 else {
@@ -377,13 +404,13 @@ async function authApiRoutes(fastify, options){
                 await like.destroy();
 
             }
-            else if (parsedLikeValue === like.like_value){
-                return reply.code(200).send({
-                    status: 'ERROR',
-                    error: true, 
-                    message: 'User already liked/disliked' 
-                });
-            }
+            // else if (parsedLikeValue === like.like_value){
+            //     return reply.code(200).send({
+            //         status: 'ERROR',
+            //         error: true, 
+            //         message: 'User already liked/disliked' 
+            //     });
+            // }
             else {
 
                 const changeInLikes = parsedLikeValue === true ? 1 : -1;
@@ -391,11 +418,18 @@ async function authApiRoutes(fastify, options){
                 await likeQueue.add({
                     type: 'change_like',
                     user_like_value: parsedLikeValue,
+                    like_num: changeInLikes,
                     user_id,
                     video_id
                 })
 
-                await redisClient.hIncrBy(video_id, 'likes', changeInLikes)
+                await redisClient.hIncrBy(video_id, 'likes', changeInLikes);
+                await redisClient.hSet(video_id, {
+                    [user_id]: parsedLikeValue.toString()
+                });
+                // await redisClient.hSet(video_id, {
+                //     'likes': vid.likes
+                // });
                 updatedLikeCount = likes + changeInLikes;
             }
         }
@@ -406,30 +440,30 @@ async function authApiRoutes(fastify, options){
             likeQueue.add({
                 type: 'create',
                 user_like_value: parsedLikeValue,
+                like_num: user_value,
                 user_id,
                 video_id
             });
-            await redisClient.hIncrBy(video_id, 'likes', user_value)
+            await redisClient.hIncrBy(video_id, 'likes', user_value);
+            await redisClient.hSet(video_id, {
+                [user_id]: parsedLikeValue.toString()
+            });
             updatedLikeCount = likes + user_value;
 
         }
         // console.log(updatedLikeCount)
         // return # of likes
+        // successLikes += 1;
+        // console.log('success likes', successLikes);
+        // request.log.info({
+        //     successLikes
+        // });
         return reply.code(200).send({
             status: 'OK',
             likes: updatedLikeCount
         });
 
     })
-
-    // figure out whether to use a different server for this part
-    // fastify.post('/upload', (request, reply) => {
-
-    // })
-    fastify.register(proxy, {
-        upstream: `http://${process.env.UPLOAD_SERVER}`,
-        prefix: '/upload',
-    });
 
     fastify.post('/view', async (request, reply) => {
         const video_id = request.body.id;
